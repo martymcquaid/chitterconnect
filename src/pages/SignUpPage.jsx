@@ -11,7 +11,7 @@ import { convertCurrency, formatCurrency } from '@/utils/currencyUtils';
 import { CurrencyContext } from '@/contexts/CurrencyContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { useSignUpForm } from '@/hooks/useSignUpForm';
-import { popularPrefixes, renderStep, handleStripeCheckout } from '@/utils/signUpUtils';
+import { popularPrefixes, renderStep, handleStripeCheckout } from '@/utils/signUpUtils.jsx';
 
 const stripePromise = loadStripe('your_stripe_publishable_key');
 
