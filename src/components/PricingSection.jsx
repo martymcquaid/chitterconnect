@@ -17,7 +17,6 @@ const plans = [
       "24/7 support",
       "500 included minutes",
       "Additional minutes at 5p per minute",
-      "Up to 1100 extra minutes per number",
       "Bulk discount: 4.5p per minute for 500-minute blocks"
     ],
   },
@@ -33,7 +32,6 @@ const plans = [
       "Priority support",
       "1000 included minutes",
       "Additional minutes at 4.5p per minute",
-      "Up to 1100 extra minutes per number",
       "Bulk discount: 4p per minute for 500-minute blocks"
     ],
   },
