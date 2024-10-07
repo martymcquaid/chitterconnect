@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import SignUpModal from './SignUpModal';
 
 const plans = [
   {
@@ -22,6 +23,14 @@ const plans = [
 ];
 
 const PricingSection = () => {
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePlanSelection = (plan) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+
   return (
     <section className="py-20 px-4 bg-secondary">
       <h2 className="text-3xl font-bold text-center mb-12 text-primary">Simple, Transparent Pricing</h2>
@@ -47,12 +56,18 @@ const PricingSection = () => {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">Choose Plan</Button>
+                <Button 
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={() => handlePlanSelection(plan)}
+                >
+                  Choose Plan
+                </Button>
               </CardContent>
             </Card>
           </motion.div>
         ))}
       </div>
+      <SignUpModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectedPlan={selectedPlan} />
     </section>
   );
 };
