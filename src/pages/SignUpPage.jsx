@@ -25,7 +25,7 @@ const SignUpPage = () => {
     name: "",
     email: "",
     company: "",
-    desiredNumber: { prefix: "", number: "" },
+    numbers: [{ prefix: "" }],
     redirectNumbers: [""],
     termsAccepted: false,
   });
@@ -35,11 +35,22 @@ const SignUpPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDesiredNumberChange = (field, value) => {
+  const handleNumberChange = (index, value) => {
+    const updatedNumbers = [...formData.numbers];
+    updatedNumbers[index] = { prefix: value };
+    setFormData((prev) => ({ ...prev, numbers: updatedNumbers }));
+  };
+
+  const addNumber = () => {
     setFormData((prev) => ({
       ...prev,
-      desiredNumber: { ...prev.desiredNumber, [field]: value },
+      numbers: [...prev.numbers, { prefix: "" }],
     }));
+  };
+
+  const removeNumber = (index) => {
+    const updatedNumbers = formData.numbers.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, numbers: updatedNumbers }));
   };
 
   const handleRedirectNumberChange = (index, value) => {
@@ -78,7 +89,9 @@ const SignUpPage = () => {
       <SignUpStepOne formData={formData} handleInputChange={handleInputChange} />,
       <SignUpStepTwo 
         formData={formData} 
-        handleDesiredNumberChange={handleDesiredNumberChange}
+        handleNumberChange={handleNumberChange}
+        addNumber={addNumber}
+        removeNumber={removeNumber}
         popularPrefixes={popularPrefixes}
       />,
       <SignUpStepThree 

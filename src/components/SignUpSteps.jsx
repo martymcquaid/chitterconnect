@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Building2, Plus } from 'lucide-react';
+import { User, Mail, Building2, Plus, Phone } from 'lucide-react';
 
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
@@ -28,29 +28,32 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
   </div>
 );
 
-export const SignUpStepTwo = ({ formData, handleDesiredNumberChange, popularPrefixes }) => (
+export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeNumber, popularPrefixes }) => (
   <div className="space-y-4">
-    <h3 className="text-lg font-semibold">Choose Your Number</h3>
-    <p className="text-sm text-muted-foreground">Select a prefix and enter your desired number. We'll do our best to accommodate your request.</p>
-    <div className="flex space-x-2">
-      <Select onValueChange={(value) => handleDesiredNumberChange('prefix', value)} value={formData.desiredNumber.prefix}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select prefix" />
-        </SelectTrigger>
-        <SelectContent>
-          {popularPrefixes.map((prefix) => (
-            <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Input
-        placeholder="Enter desired number"
-        value={formData.desiredNumber.number}
-        onChange={(e) => handleDesiredNumberChange('number', e.target.value)}
-        className="flex-grow"
-      />
-    </div>
-    <p className="text-sm text-muted-foreground">Your number will be confirmed via email upon successful sign-up.</p>
+    <h3 className="text-lg font-semibold">Choose Your Numbers</h3>
+    <p className="text-sm text-muted-foreground">Select prefixes for your numbers. The first number is included with your plan. Each additional number costs £6 per month.</p>
+    {formData.numbers.map((number, index) => (
+      <div key={index} className="flex space-x-2 items-center">
+        <Select onValueChange={(value) => handleNumberChange(index, value)} value={number.prefix}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select prefix" />
+          </SelectTrigger>
+          <SelectContent>
+            {popularPrefixes.map((prefix) => (
+              <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {index > 0 && (
+          <Button type="button" variant="destructive" onClick={() => removeNumber(index)}>Remove</Button>
+        )}
+        {index === 0 && <span className="text-sm text-muted-foreground">Included with plan</span>}
+        {index > 0 && <span className="text-sm text-muted-foreground">£6/month</span>}
+      </div>
+    ))}
+    <Button type="button" onClick={addNumber} className="w-full">
+      <Plus className="mr-2 h-4 w-4" /> Add Another Number (£6/month)
+    </Button>
   </div>
 );
 
@@ -86,7 +89,14 @@ export const SignUpStepFour = ({ formData, setFormData }) => (
       <p><strong>Name:</strong> {formData.name}</p>
       <p><strong>Email:</strong> {formData.email}</p>
       <p><strong>Company:</strong> {formData.company}</p>
-      <p><strong>Desired Number:</strong> {formData.desiredNumber.prefix} {formData.desiredNumber.number}</p>
+      <p><strong>Selected Numbers:</strong></p>
+      <ul className="list-disc list-inside">
+        {formData.numbers.map((number, index) => (
+          <li key={index}>
+            {number.prefix} {index === 0 ? '(Included with plan)' : '(£6/month)'}
+          </li>
+        ))}
+      </ul>
       <p><strong>Redirect Numbers:</strong></p>
       <ul className="list-disc list-inside">
         {formData.redirectNumbers.map((number, index) => (
