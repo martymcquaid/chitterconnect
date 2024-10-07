@@ -6,7 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard, Globe, Shield, Users } from 'lucide-react';
+import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard, Globe, Shield, Users, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const InfoCard = ({ icon: Icon, title, description }) => (
   <Card className="mb-4 bg-secondary/10">
@@ -23,9 +24,16 @@ const InfoCard = ({ icon: Icon, title, description }) => (
 const calculatePrice = (minutes) => {
   const baseMinutes = 500;
   const additionalMinutes = Math.max(0, minutes - baseMinutes);
-  const additionalCost = additionalMinutes * 0.07; // 7p per minute
-  return additionalCost.toFixed(2);
+  const regularPrice = additionalMinutes * 0.05; // 5p per minute
+  const bulkMinutes = Math.floor(additionalMinutes / 500) * 500;
+  const bulkPrice = bulkMinutes * 0.045; // 4.5p per minute for bulk
+  const remainingMinutes = additionalMinutes % 500;
+  const remainingPrice = remainingMinutes * 0.05;
+  const totalPrice = bulkPrice + remainingPrice;
+  return totalPrice.toFixed(2);
 };
+
+const MAX_MINUTES = 44640; // 31 days * 24 hours * 60 minutes
 
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
@@ -81,19 +89,42 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
         </div>
         <div className="space-y-2">
           <Label>Minutes: {number.minutes}</Label>
-          <Slider
-            min={500}
-            max={5000}
-            step={50}
-            value={[number.minutes]}
-            onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
-          />
-          <p className="text-sm text-muted-foreground">
-            Additional cost: £{calculatePrice(number.minutes)} for {number.minutes} minutes
+          <div className="relative pt-6">
+            <div className="absolute left-0 right-0 h-2 bg-gray-200 rounded">
+              <div className="absolute left-0 h-full bg-green-500 rounded" style={{ width: `${(Math.min(number.minutes, 500) / MAX_MINUTES) * 100}%` }}></div>
+              <div className="absolute left-0 h-full bg-blue-500 rounded" style={{ width: `${((number.minutes - 500) / MAX_MINUTES) * 100}%`, marginLeft: `${(500 / MAX_MINUTES) * 100}%` }}></div>
+            </div>
+            <Slider
+              min={500}
+              max={MAX_MINUTES}
+              step={50}
+              value={[number.minutes]}
+              onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
+              className="z-10"
+            />
+          </div>
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <span>500 (Included)</span>
+            <span>{MAX_MINUTES}</span>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            Additional cost: £{calculatePrice(number.minutes)} for {number.minutes - 500} extra minutes
           </p>
           <p className="text-xs text-muted-foreground">
-            (Includes 500 free minutes, additional minutes at 7p per minute)
+            (Includes 500 free minutes, additional minutes at 5p per minute, bulk discount available)
           </p>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" className="mt-2">
+                  <Info className="w-4 h-4 mr-2" /> Bulk Discount Info
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Get additional 500-minute blocks at 4.5p per minute!</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </Card>
     ))}
