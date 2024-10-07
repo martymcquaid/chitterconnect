@@ -134,27 +134,15 @@ const SignUpPage = () => {
     );
   }
 
+
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <Card className="shadow-lg">
-          <CardHeader className="bg-primary/10">
-            <CardTitle className="text-2xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name} Plan</CardTitle>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">Sign Up for {selectedPlan?.name} Plan</CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="mb-6">
-              <div className="flex justify-between items-center">
-                {[1, 2, 3, 4].map((s) => (
-                  <div key={s} className={`w-1/4 h-2 ${s <= step ? 'bg-primary' : 'bg-gray-200'} transition-all duration-300`} />
-                ))}
-              </div>
-              <div className="flex justify-between mt-2">
-                <span className="text-xs">Basic Info</span>
-                <span className="text-xs">Choose Numbers</span>
-                <span className="text-xs">Redirect Setup</span>
-                <span className="text-xs">Review</span>
-              </div>
-            </div>
+          <CardContent>
             <form onSubmit={handleSubmit}>
               <AnimatePresence mode="wait">
                 {renderStep()}
@@ -165,14 +153,14 @@ const SignUpPage = () => {
                     <ArrowLeft className="mr-2 h-4 w-4" /> Back
                   </Button>
                 )}
-                <Button type="submit" disabled={step === 4 && !formData.termsAccepted} className={`ml-auto ${step === 4 ? 'bg-green-600 hover:bg-green-700' : ''}`}>
+                <Button type="submit" disabled={step === 4 && !formData.termsAccepted} className="ml-auto">
                   {step < 4 ? (
                     <>
                       Next <ArrowRight className="ml-2 h-4 w-4" />
                     </>
                   ) : (
                     <>
-                      Proceed to Payment <Check className="ml-2 h-4 w-4" />
+                      Complete Sign Up <Check className="ml-2 h-4 w-4" />
                     </>
                   )}
                 </Button>
