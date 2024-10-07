@@ -20,13 +20,17 @@ const InfoCard = ({ icon: Icon, title, description }) => (
   </Card>
 );
 
-const calculatePrice = (baseMinutes, additionalMinutes) => {
-  const addOnPacks = Math.floor(additionalMinutes / 500);
-  const addOnPrice = addOnPacks * 22.50;
-  return addOnPrice.toFixed(2);
+const calculatePrice = (additionalMinutes) => {
+  const regularPrice = additionalMinutes * 0.05;
+  const discountedBlocks = Math.floor(additionalMinutes / 500);
+  const discountedMinutes = discountedBlocks * 500;
+  const remainingMinutes = additionalMinutes % 500;
+  const discountedPrice = discountedMinutes * 0.045 + remainingMinutes * 0.05;
+  const savings = regularPrice - discountedPrice;
+  return { regularPrice, discountedPrice, savings };
 };
 
-const MAX_ADDITIONAL_MINUTES = 1600;
+const MAX_ADDITIONAL_MINUTES = 10000;
 const formatMinutes = (minutes) => `${minutes} mins`;
 
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
@@ -57,43 +61,49 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
   </div>
 );
 
-const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => (
-  <Card key={index} className="p-4 mb-4 bg-gradient-to-br from-secondary/20 to-background">
-    <div className="flex space-x-2 items-center mb-4">
-      <Select onValueChange={(value) => handleNumberChange(index, 'prefix', value)} value={number.prefix}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select prefix" />
-        </SelectTrigger>
-        <SelectContent>
-          {popularPrefixes.map((prefix) => (
-            <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {index > 0 && (
-        <Button type="button" variant="destructive" onClick={() => removeNumber(index)}>Remove</Button>
-      )}
-    </div>
-    <div className="space-y-4">
-      <Label className="text-lg font-semibold">Additional Minutes: {formatMinutes(number.additionalMinutes)}</Label>
-      <SliderWithValue
-        min={0}
-        max={MAX_ADDITIONAL_MINUTES}
-        step={500}
-        value={[number.additionalMinutes]}
-        onValueChange={(value) => handleNumberChange(index, 'additionalMinutes', value[0])}
-        className="py-4"
-        formatValue={formatMinutes}
-      />
-      <p className="text-sm font-medium text-primary">
-        Add-on cost: £{calculatePrice(500, number.additionalMinutes)} for {number.additionalMinutes} extra minutes
-      </p>
-      <p className="text-sm text-muted-foreground">
-        500 minutes included. Add-on packs of 500 minutes for £22.50 each (4.5p per minute).
-      </p>
-    </div>
-  </Card>
-);
+const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => {
+  const { regularPrice, discountedPrice, savings } = calculatePrice(number.additionalMinutes);
+
+  return (
+    <Card key={index} className="p-4 mb-4 bg-gradient-to-br from-secondary/20 to-background">
+      <div className="flex space-x-2 items-center mb-4">
+        <Select onValueChange={(value) => handleNumberChange(index, 'prefix', value)} value={number.prefix}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select prefix" />
+          </SelectTrigger>
+          <SelectContent>
+            {popularPrefixes.map((prefix) => (
+              <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {index > 0 && (
+          <Button type="button" variant="destructive" onClick={() => removeNumber(index)}>Remove</Button>
+        )}
+      </div>
+      <div className="space-y-4">
+        <div className="bg-primary/10 p-3 rounded-md">
+          <p className="font-semibold">Included in plan: 500 minutes</p>
+        </div>
+        <Label className="text-lg font-semibold">Additional Minutes: {formatMinutes(number.additionalMinutes)}</Label>
+        <SliderWithValue
+          min={0}
+          max={MAX_ADDITIONAL_MINUTES}
+          step={1}
+          value={[number.additionalMinutes]}
+          onValueChange={(value) => handleNumberChange(index, 'additionalMinutes', value[0])}
+          className="py-4"
+          formatValue={formatMinutes}
+        />
+        <div className="space-y-2 bg-secondary/10 p-3 rounded-md">
+          <p className="text-sm font-medium">Regular price: £{regularPrice.toFixed(2)} (5p per minute)</p>
+          <p className="text-sm font-medium text-primary">Discounted price: £{discountedPrice.toFixed(2)} (4.5p per minute for 500-minute blocks)</p>
+          <p className="text-sm font-medium text-green-600">Total savings: £{savings.toFixed(2)}</p>
+        </div>
+      </div>
+    </Card>
+  );
+};
 
 export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeNumber, popularPrefixes }) => (
   <div className="space-y-4">
