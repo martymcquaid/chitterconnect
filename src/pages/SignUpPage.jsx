@@ -6,21 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { SignUpStepOne, SignUpStepTwo, SignUpStepThree, SignUpStepFour } from '@/components/SignUpSteps';
 import { Progress } from "@/components/ui/progress";
-import { calculateTotalPrice } from '@/utils/pricingUtils';
+import { calculateTotalPrice, parsePrice } from '@/utils/pricingUtils';
 import { convertCurrency, formatCurrency } from '@/utils/currencyUtils';
 import { CurrencyContext } from '@/contexts/CurrencyContext';
 import { loadStripe } from '@stripe/stripe-js';
+import { useSignUpForm } from '@/hooks/useSignUpForm';
+import { popularPrefixes, renderStep, handleStripeCheckout } from '@/utils/signUpUtils';
 
 const stripePromise = loadStripe('your_stripe_publishable_key');
-
-const popularPrefixes = [
-  { value: "0800", label: "0800 (Toll-Free UK)" },
-  { value: "1800", label: "1800 (Toll-Free US)" },
-  { value: "44", label: "+44 (UK)" },
-  { value: "1", label: "+1 (US/Canada)" },
-  { value: "61", label: "+61 (Australia)" },
-  { value: "33", label: "+33 (France)" },
-];
 
 const SignUpPage = () => {
   const location = useLocation();
@@ -29,134 +22,16 @@ const SignUpPage = () => {
   const [step, setStep] = useState(1);
   const [showPricingTable, setShowPricingTable] = useState(false);
   const { currency } = useContext(CurrencyContext);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    company: "",
-    numbers: [{ prefix: "", additionalMinutes: 0 }],
-    redirectNumbers: [""],
-    termsAccepted: false,
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleNumberChange = (index, field, value) => {
-    const updatedNumbers = [...formData.numbers];
-    updatedNumbers[index] = { ...updatedNumbers[index], [field]: value };
-    setFormData((prev) => ({ ...prev, numbers: updatedNumbers }));
-  };
-
-  const addNumber = () => {
-    setFormData((prev) => ({
-      ...prev,
-      numbers: [...prev.numbers, { prefix: "", additionalMinutes: 0 }],
-    }));
-  };
-
-  const removeNumber = (index) => {
-    const updatedNumbers = formData.numbers.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, numbers: updatedNumbers }));
-  };
-
-  const handleRedirectNumberChange = (index, value) => {
-    const updatedRedirectNumbers = [...formData.redirectNumbers];
-    updatedRedirectNumbers[index] = value;
-    setFormData((prev) => ({ ...prev, redirectNumbers: updatedRedirectNumbers }));
-  };
-
-  const addRedirectNumber = () => {
-    if (formData.redirectNumbers.length < selectedPlan.maxUsers) {
-      setFormData((prev) => ({
-        ...prev,
-        redirectNumbers: [...prev.redirectNumbers, ""],
-      }));
-    }
-  };
-
-  const removeRedirectNumber = (index) => {
-    const updatedRedirectNumbers = formData.redirectNumbers.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, redirectNumbers: updatedRedirectNumbers }));
-  };
+  const { formData, handleInputChange, handleNumberChange, addNumber, removeNumber, 
+          handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, setFormData } = useSignUpForm(selectedPlan);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (step < 4) {
       setStep(step + 1);
     } else {
-      try {
-        const totalPrice = calculateTotalPrice(selectedPlan, formData.numbers);
-        const convertedTotalPrice = convertCurrency(totalPrice, 'GBP', currency);
-        const stripe = await stripePromise;
-        const response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            priceId: selectedPlan.stripePriceId,
-            quantity: 1,
-            totalPrice: convertedTotalPrice,
-            currency: currency,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const session = await response.json();
-        const result = await stripe.redirectToCheckout({
-          sessionId: session.id,
-        });
-
-        if (result.error) {
-          console.error(result.error);
-        }
-      } catch (error) {
-        console.error("Error during checkout:", error);
-      }
+      await handleStripeCheckout(selectedPlan, formData, currency, stripePromise);
     }
-  };
-
-  const renderStep = () => {
-    const steps = [
-      <SignUpStepOne formData={formData} handleInputChange={handleInputChange} selectedPlan={selectedPlan} />,
-      <SignUpStepTwo 
-        formData={formData} 
-        handleNumberChange={handleNumberChange}
-        addNumber={addNumber}
-        removeNumber={removeNumber}
-        popularPrefixes={popularPrefixes}
-        selectedPlan={selectedPlan}
-      />,
-      <SignUpStepThree 
-        formData={formData} 
-        handleRedirectNumberChange={handleRedirectNumberChange}
-        addRedirectNumber={addRedirectNumber}
-        removeRedirectNumber={removeRedirectNumber}
-        selectedPlan={selectedPlan}
-      />,
-      <SignUpStepFour 
-        formData={formData} 
-        setFormData={setFormData}
-        selectedPlan={selectedPlan}
-      />
-    ];
-
-    return (
-      <motion.div 
-        key={`step${step}`} 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.3 }}
-      >
-        {steps[step - 1]}
-      </motion.div>
-    );
   };
 
   if (showPricingTable) {
@@ -184,14 +59,16 @@ const SignUpPage = () => {
               Sign Up for {selectedPlan?.name} Plan
             </CardTitle>
             <p className="text-center text-lg">
-              {formatCurrency(convertCurrency(parseFloat(selectedPlan?.price.replace('£', '')), 'GBP', currency), currency)}/month
+              {formatCurrency(convertCurrency(parsePrice(selectedPlan?.price), 'GBP', currency), currency)}/month
             </p>
           </CardHeader>
           <CardContent>
             <Progress value={(step / 4) * 100} className="mb-6" />
             <form onSubmit={handleSubmit}>
               <AnimatePresence mode="wait">
-                {renderStep()}
+                {renderStep(step, formData, handleInputChange, handleNumberChange, addNumber, removeNumber, 
+                            handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, setFormData, 
+                            selectedPlan, popularPrefixes)}
               </AnimatePresence>
               <div className="mt-6 flex justify-between">
                 {step > 1 && (
