@@ -3,21 +3,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
+import { Check } from 'lucide-react';
 
 const plans = [
   {
     name: "Starter",
     price: "$49",
-    features: ["Up to 1 phone number", "Up to 5 team members", "Basic call routing", "24/7 support"],
+    maxUsers: 5,
+    features: ["1 phone number", "Up to 5 team members", "Basic call routing", "24/7 support"],
   },
   {
     name: "Professional",
     price: "$99",
+    maxUsers: 15,
     features: ["Up to 3 phone numbers", "Up to 15 team members", "Advanced call routing", "Analytics dashboard", "Priority support"],
   },
   {
     name: "Enterprise",
     price: "Custom",
+    maxUsers: Infinity,
     features: ["Unlimited phone numbers", "Unlimited team members", "Custom integrations", "Dedicated account manager"],
   }
 ];
@@ -49,7 +53,7 @@ const PricingSection = () => {
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((feature, fIndex) => (
                     <li key={fIndex} className="flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                      <Check className="w-4 h-4 mr-2 text-primary" />
                       {feature}
                     </li>
                   ))}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,19 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-
-const regions = [
-  { value: "na", label: "North America" },
-  { value: "eu", label: "Europe" },
-  { value: "asia", label: "Asia" },
-  { value: "sa", label: "South America" },
-  { value: "af", label: "Africa" },
-  { value: "au", label: "Australia" },
-];
+import { Phone, User, Building2, Hash, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 
 const popularPrefixes = [
-  { value: "0800", label: "0800 (Toll-Free)" },
-  { value: "1800", label: "1800 (Toll-Free)" },
+  { value: "0800", label: "0800 (Toll-Free UK)" },
+  { value: "1800", label: "1800 (Toll-Free US)" },
   { value: "44", label: "+44 (UK)" },
   { value: "1", label: "+1 (US/Canada)" },
   { value: "61", label: "+61 (Australia)" },
@@ -36,7 +28,8 @@ const SignUpPage = () => {
     name: "",
     email: "",
     company: "",
-    phoneNumbers: [{ region: "", prefix: "", number: "" }],
+    desiredNumber: { prefix: "", number: "" },
+    redirectNumbers: [""],
     termsAccepted: false,
   });
 
@@ -45,40 +38,152 @@ const SignUpPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhoneNumberChange = (index, field, value) => {
-    const updatedPhoneNumbers = [...formData.phoneNumbers];
-    updatedPhoneNumbers[index][field] = value;
-    setFormData((prev) => ({ ...prev, phoneNumbers: updatedPhoneNumbers }));
-  };
-
-  const addPhoneNumber = () => {
+  const handleDesiredNumberChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      phoneNumbers: [...prev.phoneNumbers, { region: "", prefix: "", number: "" }],
+      desiredNumber: { ...prev.desiredNumber, [field]: value },
     }));
   };
 
-  const removePhoneNumber = (index) => {
-    const updatedPhoneNumbers = formData.phoneNumbers.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, phoneNumbers: updatedPhoneNumbers }));
+  const handleRedirectNumberChange = (index, value) => {
+    const updatedRedirectNumbers = [...formData.redirectNumbers];
+    updatedRedirectNumbers[index] = value;
+    setFormData((prev) => ({ ...prev, redirectNumbers: updatedRedirectNumbers }));
+  };
+
+  const addRedirectNumber = () => {
+    if (formData.redirectNumbers.length < selectedPlan.maxUsers) {
+      setFormData((prev) => ({
+        ...prev,
+        redirectNumbers: [...prev.redirectNumbers, ""],
+      }));
+    }
+  };
+
+  const removeRedirectNumber = (index) => {
+    const updatedRedirectNumbers = formData.redirectNumbers.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, redirectNumbers: updatedRedirectNumbers }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
-      // Here you would typically send the data to your backend
       console.log("Form submitted:", formData);
-      toast.success("Sign up successful! Check your email for further instructions.");
+      toast.success("Sign up successful! Check your email for your new number and further instructions.");
       navigate('/');
     }
   };
 
-  const calculateTotalCost = () => {
-    const baseCost = selectedPlan.price === "Custom" ? 0 : parseInt(selectedPlan.price.slice(1));
-    const numberCost = formData.phoneNumbers.length * 10; // Assume $10 per number
-    return baseCost + numberCost;
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <motion.div className="space-y-4" key="step1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <div className="flex items-center space-x-2">
+              <User className="text-primary" />
+              <Label htmlFor="name">Name</Label>
+            </div>
+            <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
+            
+            <div className="flex items-center space-x-2">
+              <Mail className="text-primary" />
+              <Label htmlFor="email">Email</Label>
+            </div>
+            <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required />
+            
+            <div className="flex items-center space-x-2">
+              <Building2 className="text-primary" />
+              <Label htmlFor="company">Company</Label>
+            </div>
+            <Input id="company" name="company" value={formData.company} onChange={handleInputChange} required />
+          </motion.div>
+        );
+      case 2:
+        return (
+          <motion.div className="space-y-4" key="step2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <h3 className="text-lg font-semibold">Choose Your Number</h3>
+            <p className="text-sm text-muted-foreground">Select a prefix and enter your desired number. We'll do our best to accommodate your request.</p>
+            <div className="flex space-x-2">
+              <Select onValueChange={(value) => handleDesiredNumberChange('prefix', value)} value={formData.desiredNumber.prefix}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select prefix" />
+                </SelectTrigger>
+                <SelectContent>
+                  {popularPrefixes.map((prefix) => (
+                    <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                placeholder="Enter desired number"
+                value={formData.desiredNumber.number}
+                onChange={(e) => handleDesiredNumberChange('number', e.target.value)}
+                className="flex-grow"
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">Your number will be confirmed via email upon successful sign-up.</p>
+          </motion.div>
+        );
+      case 3:
+        return (
+          <motion.div className="space-y-4" key="step3" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <h3 className="text-lg font-semibold">Redirect Numbers</h3>
+            <p className="text-sm text-muted-foreground">Add up to {selectedPlan.maxUsers} numbers to redirect calls to.</p>
+            {formData.redirectNumbers.map((number, index) => (
+              <div key={index} className="flex space-x-2">
+                <Input
+                  placeholder="Enter redirect number"
+                  value={number}
+                  onChange={(e) => handleRedirectNumberChange(index, e.target.value)}
+                  className="flex-grow"
+                />
+                {index > 0 && (
+                  <Button type="button" variant="destructive" onClick={() => removeRedirectNumber(index)}>Remove</Button>
+                )}
+              </div>
+            ))}
+            {formData.redirectNumbers.length < selectedPlan.maxUsers && (
+              <Button type="button" onClick={addRedirectNumber} className="w-full">
+                <Plus className="mr-2 h-4 w-4" /> Add Another Number
+              </Button>
+            )}
+          </motion.div>
+        );
+      case 4:
+        return (
+          <motion.div className="space-y-4" key="step4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <h3 className="text-lg font-semibold">Review Your Information</h3>
+            <div className="space-y-2">
+              <p><strong>Name:</strong> {formData.name}</p>
+              <p><strong>Email:</strong> {formData.email}</p>
+              <p><strong>Company:</strong> {formData.company}</p>
+              <p><strong>Desired Number:</strong> {formData.desiredNumber.prefix} {formData.desiredNumber.number}</p>
+              <p><strong>Redirect Numbers:</strong></p>
+              <ul className="list-disc list-inside">
+                {formData.redirectNumbers.map((number, index) => (
+                  <li key={index}>{number}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-semibold">Terms and Conditions</h4>
+              <p className="text-sm text-muted-foreground">By signing up, you agree to our Terms of Service and Privacy Policy. Our services comply with EU GDPR regulations.</p>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="terms"
+                  checked={formData.termsAccepted}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, termsAccepted: checked }))}
+                />
+                <label htmlFor="terms" className="text-sm">
+                  I agree to the <a href="#" className="text-primary hover:underline">Terms and Conditions</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+                </label>
+              </div>
+            </div>
+          </motion.div>
+        );
+    }
   };
 
   return (
@@ -90,103 +195,25 @@ const SignUpPage = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit}>
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.3 }}
-              >
-                {step === 1 && (
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required />
-                    </div>
-                    <div>
-                      <Label htmlFor="company">Company</Label>
-                      <Input id="company" name="company" value={formData.company} onChange={handleInputChange} required />
-                    </div>
-                  </div>
-                )}
-                {step === 2 && (
-                  <div className="space-y-4">
-                    {formData.phoneNumbers.map((phone, index) => (
-                      <div key={index} className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Select onValueChange={(value) => handlePhoneNumberChange(index, 'region', value)} value={phone.region}>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Select region" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {regions.map((region) => (
-                                <SelectItem key={region.value} value={region.value}>{region.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Select onValueChange={(value) => handlePhoneNumberChange(index, 'prefix', value)} value={phone.prefix}>
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Select prefix" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {popularPrefixes.map((prefix) => (
-                                <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            placeholder="Enter number"
-                            value={phone.number}
-                            onChange={(e) => handlePhoneNumberChange(index, 'number', e.target.value)}
-                            className="flex-grow"
-                          />
-                          {index > 0 && (
-                            <Button type="button" variant="destructive" onClick={() => removePhoneNumber(index)}>Remove</Button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    <Button type="button" onClick={addPhoneNumber}>Add Another Number</Button>
-                  </div>
-                )}
-                {step === 3 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Review Your Information</h3>
-                    <div>
-                      <p><strong>Name:</strong> {formData.name}</p>
-                      <p><strong>Email:</strong> {formData.email}</p>
-                      <p><strong>Company:</strong> {formData.company}</p>
-                      <p><strong>Phone Numbers:</strong></p>
-                      <ul>
-                        {formData.phoneNumbers.map((phone, index) => (
-                          <li key={index}>{phone.prefix} {phone.number} ({regions.find(r => r.value === phone.region)?.label})</li>
-                        ))}
-                      </ul>
-                      <p><strong>Total Monthly Cost:</strong> ${calculateTotalCost()}</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="terms"
-                        checked={formData.termsAccepted}
-                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, termsAccepted: checked }))}
-                      />
-                      <label htmlFor="terms" className="text-sm">
-                        I agree to the <a href="#" className="text-primary hover:underline">Terms and Conditions</a>
-                      </label>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
+              <AnimatePresence mode="wait">
+                {renderStep()}
+              </AnimatePresence>
               <div className="mt-6 flex justify-between">
                 {step > 1 && (
-                  <Button type="button" onClick={() => setStep(step - 1)}>Back</Button>
+                  <Button type="button" onClick={() => setStep(step - 1)} variant="outline">
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                  </Button>
                 )}
-                <Button type="submit" disabled={step === 3 && !formData.termsAccepted}>
-                  {step < 3 ? "Next" : "Complete Sign Up"}
+                <Button type="submit" disabled={step === 4 && !formData.termsAccepted} className="ml-auto">
+                  {step < 4 ? (
+                    <>
+                      Next <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      Complete Sign Up <Check className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
