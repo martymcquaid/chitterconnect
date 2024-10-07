@@ -3,12 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Phone, User, Building2, Hash, ArrowRight, ArrowLeft, Check, Mail, Plus } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { SignUpStepOne, SignUpStepTwo, SignUpStepThree, SignUpStepFour } from '@/components/SignUpSteps';
 
 const popularPrefixes = [
@@ -76,7 +72,6 @@ const SignUpPage = () => {
       navigate('/');
     }
   };
-
 
   const renderStep = () => {
     const steps = [
@@ -148,7 +143,5 @@ const SignUpPage = () => {
     </div>
   );
 };
-
-export default SignUpPage;
 
 export default SignUpPage;
