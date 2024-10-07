@@ -1,83 +1,76 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { PhoneCall, Shield, Users } from 'lucide-react';
+
+const FeatureCard = ({ icon: Icon, title, description }) => (
+  <motion.div
+    className="bg-card p-6 rounded-lg shadow-lg"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    <Icon className="text-primary w-10 h-10 mb-4" />
+    <h3 className="text-lg font-semibold mb-2">{title}</h3>
+    <p className="text-sm text-muted-foreground">{description}</p>
+  </motion.div>
+);
 
 const HeroSection = () => {
   return (
-    <section className="py-20 px-4 text-center relative overflow-hidden min-h-screen flex items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative z-10 max-w-4xl mx-auto"
-      >
-        <motion.h1 
-          className="text-5xl md:text-6xl font-bold mb-4 text-primary"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-        >
-          Welcome to ChitterChat
-        </motion.h1>
-        <motion.p 
-          className="text-xl mb-8 max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-        >
-          Elevate your business communication with professional phone numbers and smart call routing.
-        </motion.p>
+    <section className="py-20 px-4 relative overflow-hidden min-h-screen flex flex-col justify-center">
+      <div className="max-w-6xl mx-auto">
         <motion.div
-          className="text-lg mb-8 max-w-3xl mx-auto"
+          className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
+          transition={{ duration: 0.8 }}
         >
-          <p className="mb-4">
-            Choose from a variety of professional number types:
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+            Elevate Your Business Communication
+          </h1>
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-muted-foreground">
+            Professional phone numbers, smart routing, and seamless team management in one powerful platform.
           </p>
-          <ul className="list-disc list-inside mb-4 text-left inline-block">
-            <li>Toll-free numbers (e.g., 0800 434 9349)</li>
-            <li>Local numbers (e.g., +44 7xxx xxxxxx)</li>
-            <li>International numbers for global presence</li>
-          </ul>
-          <p className="mb-4">
-            ChitterChat not only enhances your business image but also protects your team's privacy:
-          </p>
-          <ul className="list-disc list-inside text-left inline-block">
-            <li>Hide personal phone numbers of your staff</li>
-            <li>Route calls intelligently to the right team member</li>
-            <li>Maintain professional communication 24/7</li>
-          </ul>
+          <div className="flex justify-center space-x-4">
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+            <Button size="lg" variant="outline" className="bg-background text-primary hover:bg-primary/10">Watch Demo</Button>
+          </div>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-        >
-          <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 mr-4">Get Started</Button>
-          <Button size="lg" variant="outline" className="bg-background text-primary hover:bg-primary/10">Learn More</Button>
-        </motion.div>
-      </motion.div>
-      <div className="absolute inset-0 z-0">
-        <motion.img 
-          src="https://images.unsplash.com/photo-1557426272-fc759fdf7a8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
-          alt="Background" 
-          className="w-full h-full object-cover opacity-10"
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 10, repeat: Infinity, repeatType: "reverse" }}
-        />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+          <FeatureCard
+            icon={PhoneCall}
+            title="Professional Numbers"
+            description="Choose from toll-free, local, or international numbers to enhance your business presence."
+          />
+          <FeatureCard
+            icon={Shield}
+            title="Privacy Protection"
+            description="Keep your team's personal numbers private while maintaining professional communication."
+          />
+          <FeatureCard
+            icon={Users}
+            title="Smart Team Routing"
+            description="Efficiently route calls to the right team member, ensuring 24/7 availability."
+          />
+        </div>
       </div>
+
       <motion.div
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+        className="absolute inset-0 -z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ duration: 1.5 }}
       >
-        <svg className="w-6 h-6 text-primary" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-          <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="url(#grid)" />
         </svg>
+        <defs>
+          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" />
+          </pattern>
+        </defs>
       </motion.div>
     </section>
   );

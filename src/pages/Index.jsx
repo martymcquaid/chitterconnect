@@ -42,10 +42,10 @@ const Index = () => {
         style={{ scaleX }}
       />
       <header className="bg-background/95 backdrop-blur-sm fixed top-0 left-0 right-0 z-40">
-        <nav className="container mx-auto px-6 py-3">
+        <nav className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <a href="#" className="text-2xl font-bold text-primary">ChitterChat</a>
-            <div className="hidden md:flex space-x-4">
+            <div className="hidden md:flex space-x-6">
               {['features', 'testimonials', 'pricing', 'faq'].map((section) => (
                 <a
                   key={section}
@@ -64,13 +64,13 @@ const Index = () => {
         <section id="hero">
           <HeroSection />
         </section>
-        <section id="features">
+        <section id="features" className="bg-secondary/30">
           <FeatureSection />
         </section>
         <section id="testimonials">
           <TestimonialSection />
         </section>
-        <section id="pricing">
+        <section id="pricing" className="bg-secondary/30">
           <PricingSection />
         </section>
         <section id="faq">
