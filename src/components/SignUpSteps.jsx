@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { SliderWithValue } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard, Globe, Shield, Users, Info } from "lucide-react";
+import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const InfoCard = ({ icon: Icon, title, description }) => (
@@ -35,6 +35,14 @@ const calculatePrice = (minutes, bulkDiscount) => {
 
 const MAX_MINUTES = 44640; // 31 days * 24 hours * 60 minutes
 
+const formatMinutes = (minutes) => {
+  if (minutes < 60) return `${minutes} mins`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${hours}h ${mins}m`;
+};
+
+export const SignUpStepOne = ({ formData, handleInputChange }) => (
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
     <InfoCard
@@ -62,6 +70,52 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
     ))}
   </div>
 );
+);
+
+const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => (
+  <Card key={index} className="p-4 mb-4 bg-gradient-to-br from-secondary/20 to-background">
+    <div className="flex space-x-2 items-center mb-4">
+      <Select onValueChange={(value) => handleNumberChange(index, 'prefix', value)} value={number.prefix}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select prefix" />
+        </SelectTrigger>
+        <SelectContent>
+          {popularPrefixes.map((prefix) => (
+            <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {index > 0 && (
+        <Button type="button" variant="destructive" onClick={() => removeNumber(index)}>Remove</Button>
+      )}
+    </div>
+    <div className="space-y-4">
+      <Label className="text-lg font-semibold">Minutes: {formatMinutes(number.minutes)}</Label>
+      <SliderWithValue
+        min={500}
+        max={MAX_MINUTES}
+        step={50}
+        value={[number.minutes]}
+        onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
+        className="py-4"
+        formatValue={formatMinutes}
+      />
+      <div className="flex items-center space-x-2 mt-2">
+        <Checkbox
+          id={`bulkDiscount-${index}`}
+          checked={number.bulkDiscount}
+          onCheckedChange={(checked) => handleNumberChange(index, 'bulkDiscount', checked)}
+        />
+        <label htmlFor={`bulkDiscount-${index}`} className="text-sm">
+          Apply bulk discount (4.5p per minute for additional 500-minute blocks)
+        </label>
+      </div>
+      <p className="text-sm font-medium text-primary">
+        Additional cost: £{calculatePrice(number.minutes, number.bulkDiscount)} for {number.minutes - 500} extra minutes
+      </p>
+    </div>
+  </Card>
+);
 
 export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeNumber, popularPrefixes }) => (
   <div className="space-y-4">
@@ -71,57 +125,22 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
       description="Select your preferred prefixes and set up minutes for each number."
     />
     {formData.numbers.map((number, index) => (
-      <Card key={index} className="p-4 mb-4">
-        <div className="flex space-x-2 items-center mb-4">
-          <Select onValueChange={(value) => handleNumberChange(index, 'prefix', value)} value={number.prefix}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select prefix" />
-            </SelectTrigger>
-            <SelectContent>
-              {popularPrefixes.map((prefix) => (
-                <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {index > 0 && (
-            <Button type="button" variant="destructive" onClick={() => removeNumber(index)}>Remove</Button>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label>Minutes: {number.minutes}</Label>
-          <Slider
-            min={500}
-            max={MAX_MINUTES}
-            step={50}
-            value={[number.minutes]}
-            onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
-          />
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>500 (Included)</span>
-            <span>{MAX_MINUTES}</span>
-          </div>
-          <div className="flex items-center space-x-2 mt-2">
-            <Checkbox
-              id={`bulkDiscount-${index}`}
-              checked={number.bulkDiscount}
-              onCheckedChange={(checked) => handleNumberChange(index, 'bulkDiscount', checked)}
-            />
-            <label htmlFor={`bulkDiscount-${index}`} className="text-sm">
-              Apply bulk discount (4.5p per minute for additional 500-minute blocks)
-            </label>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            Additional cost: £{calculatePrice(number.minutes, number.bulkDiscount)} for {number.minutes - 500} extra minutes
-          </p>
-        </div>
-      </Card>
+      <NumberSetup
+        key={index}
+        number={number}
+        index={index}
+        handleNumberChange={handleNumberChange}
+        removeNumber={removeNumber}
+        popularPrefixes={popularPrefixes}
+      />
     ))}
-    <Button type="button" onClick={addNumber} className="w-full">
+    <Button type="button" onClick={addNumber} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
       <Plus className="mr-2 h-4 w-4" /> Add Another Number
     </Button>
   </div>
 );
 
+export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
 export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
   <div className="space-y-4">
     <InfoCard
@@ -155,7 +174,9 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
     )}
   </div>
 );
+);
 
+export const SignUpStepFour = ({ formData, setFormData }) => (
 export const SignUpStepFour = ({ formData, setFormData }) => (
   <div className="space-y-4">
     <InfoCard
@@ -200,4 +221,5 @@ export const SignUpStepFour = ({ formData, setFormData }) => (
       </div>
     </div>
   </div>
+);
 );

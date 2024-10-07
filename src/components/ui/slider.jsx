@@ -18,4 +18,37 @@ const Slider = React.forwardRef(({ className, ...props }, ref) => (
 ))
 Slider.displayName = SliderPrimitive.Root.displayName
 
-export { Slider }
+const SliderWithValue = React.forwardRef(({ className, min, max, step, formatValue, ...props }, ref) => {
+  const [localValue, setLocalValue] = React.useState(props.value?.[0] || min);
+
+  React.useEffect(() => {
+    setLocalValue(props.value?.[0] || min);
+  }, [props.value, min]);
+
+  const handleChange = (newValue) => {
+    setLocalValue(newValue[0]);
+    props.onValueChange?.(newValue);
+  };
+
+  return (
+    <div className="space-y-2">
+      <Slider
+        ref={ref}
+        min={min}
+        max={max}
+        step={step}
+        className={cn("w-full", className)}
+        onValueChange={handleChange}
+        {...props}
+      />
+      <div className="flex justify-between items-center">
+        <span className="text-sm font-medium">{formatValue ? formatValue(min) : min}</span>
+        <span className="text-lg font-bold text-primary">{formatValue ? formatValue(localValue) : localValue}</span>
+        <span className="text-sm font-medium">{formatValue ? formatValue(max) : max}</span>
+      </div>
+    </div>
+  );
+});
+SliderWithValue.displayName = "SliderWithValue";
+
+export { Slider, SliderWithValue }
