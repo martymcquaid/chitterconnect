@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -23,16 +24,16 @@ const Footer = () => {
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="hover:text-primary transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Features</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link to="/features" className="hover:text-primary transition-colors">Features</Link></li>
+              <li><Link to="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
             </ul>
           </div>
           <div className="w-full md:w-1/3">
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
             <p className="mb-2">Email: info@chitterchat.com</p>
-            <p>Phone: (555) 123-4567</p>
+            <Link to="/contact" className="text-primary hover:underline">Contact Form</Link>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-700 text-center">

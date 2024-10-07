@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { PhoneCall, Shield, Users, Globe } from 'lucide-react';
+import { PhoneCall, Shield, Users, Globe, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
   <motion.div
@@ -30,31 +31,36 @@ const HeroSection = () => {
             Global Business Communication, Simplified
           </h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto text-muted-foreground">
-            Choose from a wide range of professional numbers worldwide. Whether you need a US toll-free (1-800), 
-            UK freephone (0800), German local (030), or any international prefix (+1, +44, +61, +81), we've got you covered. 
-            Enhance your global presence while keeping your team's personal numbers private.
+            Elevate your global presence with professional numbers worldwide. From US toll-free to UK freephone, 
+            we offer a range of options to suit your business needs while keeping your team's personal numbers private.
           </p>
           <div className="flex justify-center space-x-4">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
+              <Link to="/pricing">Get Started</Link>
+            </Button>
             <Button size="lg" variant="outline" className="bg-background text-primary hover:bg-primary/10">Watch Demo</Button>
           </div>
+          <Link to="/faq" className="inline-flex items-center mt-4 text-primary hover:underline">
+            <HelpCircle className="mr-2 h-4 w-4" />
+            Learn More (FAQ)
+          </Link>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
           <FeatureCard
             icon={Globe}
             title="Global Number Selection"
-            description="Choose from a vast array of international prefixes and local numbers to establish your presence in key markets worldwide."
+            description="Choose from various international prefixes and local numbers to establish your presence worldwide."
           />
           <FeatureCard
             icon={Shield}
             title="Enhanced Privacy"
-            description="Protect your team's personal numbers while maintaining professional communication channels across borders."
+            description="Protect your team's personal numbers while maintaining professional communication channels."
           />
           <FeatureCard
             icon={Users}
             title="Smart Global Routing"
-            description="Efficiently direct calls to the right team member anywhere in the world without exposing individual phone numbers."
+            description="Efficiently direct calls to the right team member anywhere in the world."
           />
         </div>
       </div>
