@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
+import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users, Info } from "lucide-react";
 import { calculateTotalPrice, formatPrice, parsePrice } from '@/utils/pricingUtils';
 import PricingSummary from './PricingSummary';
 import InfoCard from './InfoCard';
@@ -53,6 +53,14 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
         description="Select your preferred prefixes and add extra minutes as needed."
       />
       <PricingSummary plan={selectedPlan} numbers={formData.numbers} currency={currency} />
+      <Card className="p-4 bg-blue-50 border-blue-200">
+        <div className="flex items-start space-x-2">
+          <Info className="w-5 h-5 text-blue-500 mt-0.5" />
+          <p className="text-sm text-blue-700">
+            Any purchased and unused minutes each month will be carried over to the next month, up to a maximum of 90 days. This ensures you get the most value from your plan!
+          </p>
+        </div>
+      </Card>
       {formData.numbers.map((number, index) => (
         <NumberSetup
           key={index}
