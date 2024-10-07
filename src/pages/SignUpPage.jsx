@@ -26,7 +26,7 @@ const SignUpPage = () => {
     name: "",
     email: "",
     company: "",
-    numbers: [{ prefix: "", minutes: 500 }],
+    numbers: [{ prefix: "", additionalMinutes: 0 }],
     redirectNumbers: [""],
     termsAccepted: false,
   });
@@ -45,7 +45,7 @@ const SignUpPage = () => {
   const addNumber = () => {
     setFormData((prev) => ({
       ...prev,
-      numbers: [...prev.numbers, { prefix: "", minutes: 500 }],
+      numbers: [...prev.numbers, { prefix: "", additionalMinutes: 0 }],
     }));
   };
 

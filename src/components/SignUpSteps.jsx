@@ -46,7 +46,7 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
       title="Choose Your Numbers"
       description="Select your preferred prefixes and add extra minutes as needed."
     />
-    <PricingSummary plan={selectedPlan} numbers={formData.numbers} basePrice={parseFloat(selectedPlan.price.replace('$', ''))} />
+    <PricingSummary plan={selectedPlan} numbers={formData.numbers} basePrice={parseFloat(selectedPlan.price.replace('£', ''))} />
     {formData.numbers.map((number, index) => (
       <NumberSetup
         key={index}
@@ -145,3 +145,5 @@ export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => (
     </div>
   </div>
 );
+
+export default SignUpSteps;

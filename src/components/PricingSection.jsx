@@ -8,8 +8,9 @@ import { Check } from 'lucide-react';
 const plans = [
   {
     name: "Starter",
-    price: "$49",
+    price: "£19",
     maxUsers: 5,
+    includedMinutes: 500,
     features: [
       "1 phone number",
       "Up to 5 team members",
