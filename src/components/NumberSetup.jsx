@@ -1,0 +1,55 @@
+import React from 'react';
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { SliderWithValue } from "@/components/ui/slider";
+import { formatPrice } from '@/utils/pricingUtils';
+
+const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, plan }) => {
+  const additionalCost = calculateAdditionalCost(plan, number.additionalMinutes);
+  const regularPrice = number.additionalMinutes * 0.05;
+  const savings = regularPrice - additionalCost;
+
+  return (
+    <Card key={index} className="p-4 mb-4 bg-gradient-to-br from-secondary/20 to-background">
+      <div className="flex space-x-2 items-center mb-4">
+        <Select onValueChange={(value) => handleNumberChange(index, 'prefix', value)} value={number.prefix}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select prefix" />
+          </SelectTrigger>
+          <SelectContent>
+            {popularPrefixes.map((prefix) => (
+              <SelectItem key={prefix.value} value={prefix.value}>{prefix.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {index > 0 && (
+          <Button type="button" variant="destructive" onClick={() => removeNumber(index)}>Remove</Button>
+        )}
+      </div>
+      <div className="space-y-4">
+        <div className="bg-primary/10 p-3 rounded-md">
+          <p className="font-semibold">Included in plan: {plan.includedMinutes} minutes</p>
+        </div>
+        <Label className="text-lg font-semibold">Additional Minutes: {number.additionalMinutes}</Label>
+        <SliderWithValue
+          min={0}
+          max={1000}
+          step={1}
+          value={[number.additionalMinutes]}
+          onValueChange={(value) => handleNumberChange(index, 'additionalMinutes', value[0])}
+          className="py-4"
+          formatValue={(value) => `${value} mins`}
+        />
+        <div className="space-y-2 bg-secondary/10 p-3 rounded-md">
+          <p className="text-sm font-medium">Regular price: {formatPrice(regularPrice)} (5p per minute)</p>
+          <p className="text-sm font-medium text-primary">Discounted price: {formatPrice(additionalCost)} ({plan.name === "Starter" ? "4.5" : "4"}p per minute for 500-minute blocks)</p>
+          <p className="text-sm font-medium text-green-600">Total savings: {formatPrice(savings)}</p>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+export default NumberSetup;
