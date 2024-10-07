@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { SliderWithValue } from "@/components/ui/slider";
-import { formatPrice } from '@/utils/pricingUtils';
+import { formatPrice, calculateAdditionalCost } from '@/utils/pricingUtils';
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, plan }) => {
   const additionalCost = calculateAdditionalCost(plan, number.additionalMinutes);
