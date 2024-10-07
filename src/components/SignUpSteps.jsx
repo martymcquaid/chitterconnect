@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
-import { parseFloat } from '@/utils/pricingUtils';
+import { calculateTotalPrice, formatPrice } from '@/utils/pricingUtils';
 import PricingSummary from './PricingSummary';
 import InfoCard from './InfoCard';
 import NumberSetup from './NumberSetup';
