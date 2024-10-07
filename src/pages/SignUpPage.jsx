@@ -137,37 +137,48 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name} Plan</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Progress value={(step / 4) * 100} className="mb-6" />
-            <form onSubmit={handleSubmit}>
-              <AnimatePresence mode="wait">
-                {renderStep()}
-              </AnimatePresence>
-              <div className="mt-6 flex justify-between">
-                {step > 1 && (
-                  <Button type="button" onClick={() => setStep(step - 1)} variant="outline">
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                  </Button>
-                )}
-                <Button type="submit" disabled={step === 4 && !formData.termsAccepted} className="ml-auto">
-                  {step < 4 ? (
-                    <>
-                      Next <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      Complete Sign Up <Check className="ml-2 h-4 w-4" />
-                    </>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-3xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name} Plan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Progress value={(step / 4) * 100} className="mb-6" />
+              <form onSubmit={handleSubmit}>
+                <AnimatePresence mode="wait">
+                  {renderStep()}
+                </AnimatePresence>
+                <motion.div 
+                  className="mt-6 flex justify-between"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {step > 1 && (
+                    <Button type="button" onClick={() => setStep(step - 1)} variant="outline">
+                      <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                    </Button>
                   )}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                  <Button type="submit" disabled={step === 4 && !formData.termsAccepted} className="ml-auto">
+                    {step < 4 ? (
+                      <>
+                        Next <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        Complete Sign Up <Check className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
