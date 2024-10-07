@@ -83,25 +83,36 @@ const SignUpPage = () => {
     if (step < 4) {
       setStep(step + 1);
     } else {
-      const totalPrice = calculateTotalPrice(selectedPlan, formData.numbers);
-      const stripe = await stripePromise;
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId: selectedPlan.stripePriceId,
-          quantity: 1,
-          totalPrice: totalPrice,
-        }),
-      });
-      const session = await response.json();
-      const result = await stripe.redirectToCheckout({
-        sessionId: session.id,
-      });
-      if (result.error) {
-        console.error(result.error);
+      try {
+        const totalPrice = calculateTotalPrice(selectedPlan, formData.numbers);
+        const stripe = await stripePromise;
+        const response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            priceId: selectedPlan.stripePriceId,
+            quantity: 1,
+            totalPrice: totalPrice,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const session = await response.json();
+        const result = await stripe.redirectToCheckout({
+          sessionId: session.id,
+        });
+
+        if (result.error) {
+          console.error(result.error);
+        }
+      } catch (error) {
+        console.error("Error during checkout:", error);
+        // Handle the error, maybe show a user-friendly message
       }
     }
   };
