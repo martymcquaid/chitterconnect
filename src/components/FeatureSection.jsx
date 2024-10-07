@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PhoneCall, Users, Bell, Shield } from 'lucide-react';
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -28,20 +29,27 @@ const features = [
 const FeatureSection = () => {
   return (
     <section className="py-20 px-4 bg-secondary">
-      <h2 className="text-3xl font-bold text-center mb-12">Why Choose ChitterChat?</h2>
+      <h2 className="text-3xl font-bold text-center mb-12 text-primary">Why Choose ChitterChat?</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
         {features.map((feature, index) => (
-          <Card key={index}>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                {feature.icon}
-                <span className="ml-2">{feature.title}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>{feature.description}</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+          >
+            <Card className="h-full bg-card hover:bg-card/90 transition-colors duration-300">
+              <CardHeader>
+                <CardTitle className="flex items-center text-primary">
+                  {feature.icon}
+                  <span className="ml-2">{feature.title}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{feature.description}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
       </div>
     </section>
