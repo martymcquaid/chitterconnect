@@ -50,6 +50,10 @@ const SignUpPage = () => {
     );
   }
 
+  const convertedPrice = selectedPlan?.price === "Custom" 
+    ? "Custom" 
+    : formatCurrency(convertCurrency(parsePrice(selectedPlan?.price), 'GBP', currency), currency);
+
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -59,7 +63,7 @@ const SignUpPage = () => {
               Sign Up for {selectedPlan?.name} Plan
             </CardTitle>
             <p className="text-center text-lg">
-              {formatCurrency(convertCurrency(parsePrice(selectedPlan?.price), 'GBP', currency), currency)}/month
+              {convertedPrice}/month
             </p>
           </CardHeader>
           <CardContent>
@@ -68,7 +72,7 @@ const SignUpPage = () => {
               <AnimatePresence mode="wait">
                 {renderStep(step, formData, handleInputChange, handleNumberChange, addNumber, removeNumber, 
                             handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, setFormData, 
-                            selectedPlan, popularPrefixes)}
+                            selectedPlan, popularPrefixes, currency)}
               </AnimatePresence>
               <div className="mt-6 flex justify-between">
                 {step > 1 && (

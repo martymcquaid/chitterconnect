@@ -25,7 +25,7 @@ const plans = [
   },
   {
     name: "Professional",
-    price: "$99",
+    price: 99,
     maxUsers: 15,
     features: [
       "Up to 3 phone numbers",
@@ -76,7 +76,9 @@ const PricingSection = () => {
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-primary">{plan.name}</CardTitle>
                 <p className="text-3xl font-bold">
-                  {formatCurrency(convertCurrency(plan.price, 'GBP', currency), currency)}
+                  {plan.price === "Custom" 
+                    ? "Custom" 
+                    : formatCurrency(convertCurrency(plan.price, 'GBP', currency), currency)}
                   <span className="text-sm font-normal">/month</span>
                 </p>
               </CardHeader>
