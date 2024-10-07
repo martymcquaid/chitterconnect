@@ -5,9 +5,14 @@ export const parsePrice = (price) => {
 
 export const calculateTotalPrice = (plan, numbers) => {
   const basePrice = parsePrice(plan.price);
-  const totalAdditionalMinutes = numbers.reduce((sum, number) => sum + (number.additionalMinutes || 0), 0);
+  const additionalNumbersCost = (numbers.length - 1) * 9; // £9 for each additional number
+  const totalAdditionalMinutes = numbers.reduce((sum, number, index) => {
+    // First number uses plan's included minutes, additional numbers get 500 minutes each
+    const includedMinutes = index === 0 ? plan.includedMinutes : 500;
+    return sum + Math.max(0, (number.additionalMinutes || 0) - includedMinutes);
+  }, 0);
   const additionalCost = calculateAdditionalCost(plan, totalAdditionalMinutes);
-  return basePrice + additionalCost;
+  return basePrice + additionalNumbersCost + additionalCost;
 };
 
 export const calculateAdditionalCost = (plan, additionalMinutes) => {
