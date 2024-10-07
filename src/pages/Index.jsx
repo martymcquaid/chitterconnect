@@ -6,25 +6,34 @@ import TestimonialSection from '@/components/TestimonialSection';
 import PricingSection from '@/components/PricingSection';
 import FAQSection from '@/components/FAQSection';
 import Footer from '@/components/Footer';
+import SignUpForm from '@/components/SignUpForm';
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="bg-background/95 backdrop-blur-sm fixed top-0 left-0 right-0 z-50">
-        <nav className="container mx-auto px-6 py-3">
+        <nav className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <a href="#" className="text-2xl font-bold text-primary">ChitterChat</a>
-            <div className="hidden md:flex space-x-4">
+            <div className="hidden md:flex space-x-6">
               <a href="#features" className="hover:text-primary transition-colors">Features</a>
               <a href="#testimonials" className="hover:text-primary transition-colors">Testimonials</a>
               <a href="#pricing" className="hover:text-primary transition-colors">Pricing</a>
               <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
             </div>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Sign Up</Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Sign Up</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <SignUpForm />
+              </DialogContent>
+            </Dialog>
           </div>
         </nav>
       </header>
-      <main className="pt-16">
+      <main className="pt-20">
         <HeroSection />
         <div id="features">
           <FeatureSection />
