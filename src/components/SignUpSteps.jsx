@@ -4,10 +4,28 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Building2, Plus, Phone } from 'lucide-react';
+import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+
+const InfoCard = ({ icon: Icon, title, description }) => (
+  <Card className="mb-4">
+    <CardContent className="flex items-start p-4">
+      <Icon className="text-primary mr-3 mt-1" />
+      <div>
+        <h4 className="font-semibold mb-1">{title}</h4>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
+    <InfoCard
+      icon={Settings}
+      title="Flexible Call Routing"
+      description="You'll be able to change call routing and team assignments easily in your admin panel after setup."
+    />
     <div className="flex items-center space-x-2">
       <User className="text-primary" />
       <Label htmlFor="name">Name</Label>
@@ -30,8 +48,12 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
 
 export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeNumber, popularPrefixes }) => (
   <div className="space-y-4">
+    <InfoCard
+      icon={Phone}
+      title="Multiple Numbers"
+      description="Choose your preferred prefixes. Remember, the first number is included with your plan, and each additional number is £6/month."
+    />
     <h3 className="text-lg font-semibold">Choose Your Numbers</h3>
-    <p className="text-sm text-muted-foreground">Select prefixes for your numbers. The first number is included with your plan. Each additional number costs £6 per month.</p>
     {formData.numbers.map((number, index) => (
       <div key={index} className="flex space-x-2 items-center">
         <Select onValueChange={(value) => handleNumberChange(index, value)} value={number.prefix}>
@@ -59,6 +81,11 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
 
 export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
   <div className="space-y-4">
+    <InfoCard
+      icon={Settings}
+      title="Customizable Routing"
+      description="Set up initial redirect numbers here. You can easily modify these in your admin panel later."
+    />
     <h3 className="text-lg font-semibold">Redirect Numbers</h3>
     <p className="text-sm text-muted-foreground">Add up to {selectedPlan.maxUsers} numbers to redirect calls to.</p>
     {formData.redirectNumbers.map((number, index) => (
@@ -84,6 +111,16 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
 
 export const SignUpStepFour = ({ formData, setFormData }) => (
   <div className="space-y-4">
+    <InfoCard
+      icon={Clock}
+      title="Account Activation"
+      description="Your account will be set up within 2 hours, but it's often instant. We'll email you when your dashboard and service are ready."
+    />
+    <InfoCard
+      icon={CreditCard}
+      title="Secure Payment"
+      description="You'll be redirected to our secure payment page to set up your subscription after reviewing your information."
+    />
     <h3 className="text-lg font-semibold">Review Your Information</h3>
     <div className="space-y-2">
       <p><strong>Name:</strong> {formData.name}</p>
