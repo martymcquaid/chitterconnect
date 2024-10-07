@@ -1,6 +1,12 @@
 import React from 'react';
-import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Checkbox, Button, Slider, Card, CardContent } from "@/components/ui/index";
-import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard, Globe, Shield, Users, Info } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Card, CardContent } from "@/components/ui/card";
+import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard, Globe, Shield, Users, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const InfoCard = ({ icon: Icon, title, description }) => (
