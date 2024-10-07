@@ -127,7 +127,7 @@ export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => {
         <div className="space-y-2">
           <p><strong>Name:</strong> {formData.name}</p>
           <p><strong>Email:</strong> {formData.email}</p>
-          <p><strong>Company:</strong> {formData.company}</p>
+          <p><strong>Company:</strong> {formData.company || 'Not provided'}</p>
           <p><strong>Selected Numbers:</strong></p>
           <ul className="list-disc list-inside pl-4">
             {formData.numbers.map((number, index) => (
@@ -136,10 +136,10 @@ export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => {
               </li>
             ))}
           </ul>
-          <p><strong>Redirect Numbers:</strong></p>
+          <p><strong>Team Members:</strong></p>
           <ul className="list-disc list-inside pl-4">
-            {formData.redirectNumbers.map((number, index) => (
-              <li key={index}>{number.name}: {number.number}</li>
+            {formData.redirectNumbers.map((member, index) => (
+              <li key={index}>{member.name}: {member.number}</li>
             ))}
           </ul>
         </div>
