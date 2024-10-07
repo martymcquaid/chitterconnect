@@ -35,7 +35,7 @@ const MAX_ADDITIONAL_MINUTES = 1100;
 const formatMinutes = (minutes) => `${minutes} mins`;
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, includedMinutes }) => {
-  const totalMinutes = number.minutes;
+  const totalMinutes = number.minutes || includedMinutes;
   const additionalMinutes = Math.max(0, totalMinutes - includedMinutes);
   const { regularPrice, discountedPrice, savings } = calculatePrice(additionalMinutes);
 
@@ -67,7 +67,7 @@ const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularP
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <p className="font-semibold">Included in plan: {includedMinutes} minutes</p>
+            <p className="font-semibold">Included in plan: {formatMinutes(includedMinutes)}</p>
           </motion.div>
           <Label className="text-lg font-semibold">Total Minutes: {formatMinutes(totalMinutes)}</Label>
           <SliderWithValue
