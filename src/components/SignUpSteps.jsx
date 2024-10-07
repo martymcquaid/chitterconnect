@@ -1,11 +1,5 @@
 import React from 'react';
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { Card, CardContent } from "@/components/ui/card";
+import { Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Checkbox, Button, Slider, Card, CardContent } from "@/components/ui/index";
 import { User, Mail, Building2, Plus, Phone, Settings, Clock, CreditCard, Globe, Shield, Users, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -21,12 +15,12 @@ const InfoCard = ({ icon: Icon, title, description }) => (
   </Card>
 );
 
-const calculatePrice = (minutes) => {
+const calculatePrice = (minutes, bulkDiscount) => {
   const baseMinutes = 500;
   const additionalMinutes = Math.max(0, minutes - baseMinutes);
   const regularPrice = additionalMinutes * 0.05; // 5p per minute
   const bulkMinutes = Math.floor(additionalMinutes / 500) * 500;
-  const bulkPrice = bulkMinutes * 0.045; // 4.5p per minute for bulk
+  const bulkPrice = bulkMinutes * (bulkDiscount ? 0.045 : 0.05); // 4.5p per minute for bulk if discount applied
   const remainingMinutes = additionalMinutes % 500;
   const remainingPrice = remainingMinutes * 0.05;
   const totalPrice = bulkPrice + remainingPrice;
@@ -42,23 +36,24 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
       title="Global Communication Solution"
       description="Set up your account to start connecting with customers worldwide."
     />
-    <div className="flex items-center space-x-2">
-      <User className="text-primary" />
-      <Label htmlFor="name">Full Name</Label>
-    </div>
-    <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required placeholder="John Doe" />
-    
-    <div className="flex items-center space-x-2">
-      <Mail className="text-primary" />
-      <Label htmlFor="email">Business Email</Label>
-    </div>
-    <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="john@company.com" />
-    
-    <div className="flex items-center space-x-2">
-      <Building2 className="text-primary" />
-      <Label htmlFor="company">Company Name</Label>
-    </div>
-    <Input id="company" name="company" value={formData.company} onChange={handleInputChange} required placeholder="Acme Inc." />
+    {['name', 'email', 'company'].map((field) => (
+      <div key={field} className="space-y-2">
+        <div className="flex items-center space-x-2">
+          {field === 'name' && <User className="text-primary" />}
+          {field === 'email' && <Mail className="text-primary" />}
+          {field === 'company' && <Building2 className="text-primary" />}
+          <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
+        </div>
+        <Input
+          id={field}
+          name={field}
+          value={formData[field]}
+          onChange={handleInputChange}
+          required
+          placeholder={`Enter your ${field}`}
+        />
+      </div>
+    ))}
   </div>
 );
 
@@ -69,7 +64,6 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
       title="Choose Your Numbers"
       description="Select your preferred prefixes and set up minutes for each number."
     />
-    <h3 className="text-lg font-semibold">Your Virtual Numbers</h3>
     {formData.numbers.map((number, index) => (
       <Card key={index} className="p-4 mb-4">
         <div className="flex space-x-2 items-center mb-4">
@@ -89,42 +83,30 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
         </div>
         <div className="space-y-2">
           <Label>Minutes: {number.minutes}</Label>
-          <div className="relative pt-6">
-            <div className="absolute left-0 right-0 h-2 bg-gray-200 rounded">
-              <div className="absolute left-0 h-full bg-green-500 rounded" style={{ width: `${(Math.min(number.minutes, 500) / MAX_MINUTES) * 100}%` }}></div>
-              <div className="absolute left-0 h-full bg-blue-500 rounded" style={{ width: `${((number.minutes - 500) / MAX_MINUTES) * 100}%`, marginLeft: `${(500 / MAX_MINUTES) * 100}%` }}></div>
-            </div>
-            <Slider
-              min={500}
-              max={MAX_MINUTES}
-              step={50}
-              value={[number.minutes]}
-              onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
-              className="z-10"
-            />
-          </div>
+          <Slider
+            min={500}
+            max={MAX_MINUTES}
+            step={50}
+            value={[number.minutes]}
+            onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
+          />
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>500 (Included)</span>
             <span>{MAX_MINUTES}</span>
           </div>
+          <div className="flex items-center space-x-2 mt-2">
+            <Checkbox
+              id={`bulkDiscount-${index}`}
+              checked={number.bulkDiscount}
+              onCheckedChange={(checked) => handleNumberChange(index, 'bulkDiscount', checked)}
+            />
+            <label htmlFor={`bulkDiscount-${index}`} className="text-sm">
+              Apply bulk discount (4.5p per minute for additional 500-minute blocks)
+            </label>
+          </div>
           <p className="text-sm text-muted-foreground mt-2">
-            Additional cost: £{calculatePrice(number.minutes)} for {number.minutes - 500} extra minutes
+            Additional cost: £{calculatePrice(number.minutes, number.bulkDiscount)} for {number.minutes - 500} extra minutes
           </p>
-          <p className="text-xs text-muted-foreground">
-            (Includes 500 free minutes, additional minutes at 5p per minute, bulk discount available)
-          </p>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="sm" className="mt-2">
-                  <Info className="w-4 h-4 mr-2" /> Bulk Discount Info
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Get additional 500-minute blocks at 4.5p per minute!</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
       </Card>
     ))}
@@ -141,14 +123,18 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
       title="Team Setup"
       description="Add team members' numbers for call routing. You can modify these later in your admin panel."
     />
-    <h3 className="text-lg font-semibold">Redirect Numbers</h3>
-    <p className="text-sm text-muted-foreground">Add up to {selectedPlan.maxUsers} numbers to redirect calls to.</p>
     {formData.redirectNumbers.map((number, index) => (
       <div key={index} className="flex space-x-2">
         <Input
+          placeholder="Team Member Name"
+          value={number.name}
+          onChange={(e) => handleRedirectNumberChange(index, 'name', e.target.value)}
+          className="flex-grow"
+        />
+        <Input
           placeholder="Enter redirect number"
-          value={number}
-          onChange={(e) => handleRedirectNumberChange(index, e.target.value)}
+          value={number.number}
+          onChange={(e) => handleRedirectNumberChange(index, 'number', e.target.value)}
           className="flex-grow"
         />
         {index > 0 && (

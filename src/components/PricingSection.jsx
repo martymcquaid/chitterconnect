@@ -16,20 +16,37 @@ const plans = [
       "Basic call routing",
       "24/7 support",
       "500 included minutes",
-      "Additional minutes at 7p per minute"
+      "Additional minutes at 5p per minute",
+      "Bulk discount: 4.5p per minute for 500-minute blocks"
     ],
   },
   {
     name: "Professional",
     price: "$99",
     maxUsers: 15,
-    features: ["Up to 3 phone numbers", "Up to 15 team members", "Advanced call routing", "Analytics dashboard", "Priority support"],
+    features: [
+      "Up to 3 phone numbers",
+      "Up to 15 team members",
+      "Advanced call routing",
+      "Analytics dashboard",
+      "Priority support",
+      "1000 included minutes",
+      "Additional minutes at 4.5p per minute",
+      "Bulk discount: 4p per minute for 500-minute blocks"
+    ],
   },
   {
     name: "Enterprise",
     price: "Custom",
     maxUsers: Infinity,
-    features: ["Unlimited phone numbers", "Unlimited team members", "Custom integrations", "Dedicated account manager"],
+    features: [
+      "Unlimited phone numbers",
+      "Unlimited team members",
+      "Custom integrations",
+      "Dedicated account manager",
+      "Custom minute packages",
+      "Volume-based discounts"
+    ],
   }
 ];
 
@@ -41,8 +58,8 @@ const PricingSection = () => {
   };
 
   return (
-    <section className="py-20 px-4 bg-secondary">
-      <h2 className="text-3xl font-bold text-center mb-12 text-primary">Simple, Transparent Pricing</h2>
+    <section className="py-20 px-4 bg-gradient-to-b from-secondary to-background">
+      <h2 className="text-4xl font-bold text-center mb-12 text-primary">Simple, Transparent Pricing</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {plans.map((plan, index) => (
           <motion.div
