@@ -7,10 +7,8 @@ import { SliderWithValue } from "@/components/ui/slider";
 import { formatPrice, calculateAdditionalCost } from '@/utils/pricingUtils';
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, plan }) => {
-  const includedMinutes = index === 0 ? plan.includedMinutes : 500;
-  const additionalMinutes = Math.max(0, number.additionalMinutes - includedMinutes);
-  const additionalCost = calculateAdditionalCost(plan, additionalMinutes);
-  const regularPrice = additionalMinutes * 0.05;
+  const additionalCost = calculateAdditionalCost(plan, number.additionalMinutes);
+  const regularPrice = number.additionalMinutes * 0.05;
   const savings = regularPrice - additionalCost;
 
   return (
@@ -32,10 +30,9 @@ const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularP
       </div>
       <div className="space-y-4">
         <div className="bg-primary/10 p-3 rounded-md">
-          <p className="font-semibold">Included minutes: {includedMinutes}</p>
-          {index > 0 && <p className="text-sm text-muted-foreground">Additional number cost: £9/month</p>}
+          <p className="font-semibold">Included in plan: {plan.includedMinutes} minutes</p>
         </div>
-        <Label className="text-lg font-semibold">Additional Minutes: {additionalMinutes}</Label>
+        <Label className="text-lg font-semibold">Additional Minutes: {number.additionalMinutes}</Label>
         <SliderWithValue
           min={0}
           max={1000}

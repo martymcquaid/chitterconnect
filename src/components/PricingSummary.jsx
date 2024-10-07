@@ -1,19 +1,12 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
-import { calculateTotalPrice, formatPrice, parsePrice, calculateAdditionalCost } from '@/utils/pricingUtils';
+import { calculateTotalPrice, formatPrice, parsePrice } from '@/utils/pricingUtils';
 
 const PricingSummary = ({ plan, numbers }) => {
   const basePrice = parsePrice(plan.price);
   const totalPrice = calculateTotalPrice(plan, numbers);
-  const additionalNumbersCost = (numbers.length - 1) * 9;
-  
-  const totalAdditionalMinutes = numbers.reduce((sum, number, index) => {
-    const includedMinutes = index === 0 ? plan.includedMinutes : 500;
-    return sum + Math.max(0, (number.additionalMinutes || 0) - includedMinutes);
-  }, 0);
-  
-  const additionalMinutesCost = calculateAdditionalCost(plan, totalAdditionalMinutes);
+  const additionalCost = totalPrice - basePrice;
 
   return (
     <Card className="mb-4 bg-primary/10 p-4">
@@ -28,13 +21,15 @@ const PricingSummary = ({ plan, numbers }) => {
       </div>
       <div className="text-sm text-muted-foreground space-y-1">
         <p>Base plan: {formatPrice(basePrice)}/month</p>
+        {additionalCost > 0 && (
+          <>
+            <p>Additional costs: {formatPrice(additionalCost)}</p>
+            <p>Total additional minutes: {numbers.reduce((sum, number) => sum + (number.additionalMinutes || 0), 0)}</p>
+          </>
+        )}
         {numbers.length > 1 && (
-          <p>Additional numbers: {numbers.length - 1} x £9 = {formatPrice(additionalNumbersCost)}</p>
+          <p>Additional numbers: {numbers.length - 1}</p>
         )}
-        {additionalMinutesCost > 0 && (
-          <p>Additional minutes cost: {formatPrice(additionalMinutesCost)}</p>
-        )}
-        <p>Total additional minutes: {totalAdditionalMinutes}</p>
       </div>
     </Card>
   );
