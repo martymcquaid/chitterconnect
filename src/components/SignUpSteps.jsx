@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { SliderWithValue } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users, DollarSign } from "lucide-react";
-import { calculateTotalPrice, formatPrice } from '@/utils/pricingUtils';
+import { calculateTotalPrice, formatPrice, calculateAdditionalCost } from '@/utils/pricingUtils';
 
 const InfoCard = ({ icon: Icon, title, description }) => (
   <Card className="mb-4 bg-secondary/10">
@@ -39,7 +39,9 @@ const PricingSummary = ({ plan, totalMinutes }) => (
 );
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, plan }) => {
-  const { regularPrice, discountedPrice, savings } = calculatePrice(number.additionalMinutes);
+  const additionalCost = calculateAdditionalCost(plan, number.additionalMinutes);
+  const regularPrice = number.additionalMinutes * 0.05;
+  const savings = regularPrice - additionalCost;
 
   return (
     <Card key={index} className="p-4 mb-4 bg-gradient-to-br from-secondary/20 to-background">
@@ -60,22 +62,22 @@ const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularP
       </div>
       <div className="space-y-4">
         <div className="bg-primary/10 p-3 rounded-md">
-          <p className="font-semibold">Included in plan: 500 minutes</p>
+          <p className="font-semibold">Included in plan: {plan.includedMinutes} minutes</p>
         </div>
-        <Label className="text-lg font-semibold">Additional Minutes: {formatMinutes(number.additionalMinutes)}</Label>
+        <Label className="text-lg font-semibold">Additional Minutes: {number.additionalMinutes}</Label>
         <SliderWithValue
           min={0}
-          max={MAX_ADDITIONAL_MINUTES}
+          max={1000}
           step={1}
           value={[number.additionalMinutes]}
           onValueChange={(value) => handleNumberChange(index, 'additionalMinutes', value[0])}
           className="py-4"
-          formatValue={formatMinutes}
+          formatValue={(value) => `${value} mins`}
         />
         <div className="space-y-2 bg-secondary/10 p-3 rounded-md">
-          <p className="text-sm font-medium">Regular price: £{regularPrice.toFixed(2)} (5p per minute)</p>
-          <p className="text-sm font-medium text-primary">Discounted price: £{discountedPrice.toFixed(2)} (4.5p per minute for 500-minute blocks)</p>
-          <p className="text-sm font-medium text-green-600">Total savings: £{savings.toFixed(2)}</p>
+          <p className="text-sm font-medium">Regular price: {formatPrice(regularPrice)} (5p per minute)</p>
+          <p className="text-sm font-medium text-primary">Discounted price: {formatPrice(additionalCost)} ({plan.name === "Starter" ? "4.5" : "4"}p per minute for 500-minute blocks)</p>
+          <p className="text-sm font-medium text-green-600">Total savings: {formatPrice(savings)}</p>
         </div>
       </div>
     </Card>
@@ -229,3 +231,5 @@ export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => {
     </div>
   );
 };
+
+export { SignUpStepOne, SignUpStepTwo, SignUpStepThree, SignUpStepFour };

@@ -4,7 +4,7 @@ export const calculateTotalPrice = (plan, additionalMinutes) => {
   return basePrice + additionalCost;
 };
 
-const calculateAdditionalCost = (plan, additionalMinutes) => {
+export const calculateAdditionalCost = (plan, additionalMinutes) => {
   const regularPrice = additionalMinutes * 0.05;
   const discountedBlocks = Math.floor(additionalMinutes / 500);
   const discountedMinutes = discountedBlocks * 500;
