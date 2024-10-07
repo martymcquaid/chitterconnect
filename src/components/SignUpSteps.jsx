@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { SliderWithValue } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const InfoCard = ({ icon: Icon, title, description }) => (
   <Card className="mb-4 bg-secondary/10">
@@ -24,16 +23,14 @@ const InfoCard = ({ icon: Icon, title, description }) => (
 const calculatePrice = (minutes, bulkDiscount) => {
   const baseMinutes = 500;
   const additionalMinutes = Math.max(0, minutes - baseMinutes);
-  const regularPrice = additionalMinutes * 0.05; // 5p per minute
   const bulkMinutes = Math.floor(additionalMinutes / 500) * 500;
-  const bulkPrice = bulkMinutes * (bulkDiscount ? 0.045 : 0.05); // 4.5p per minute for bulk if discount applied
+  const bulkPrice = bulkMinutes * (bulkDiscount ? 0.045 : 0.05);
   const remainingMinutes = additionalMinutes % 500;
   const remainingPrice = remainingMinutes * 0.05;
-  const totalPrice = bulkPrice + remainingPrice;
-  return totalPrice.toFixed(2);
+  return (bulkPrice + remainingPrice).toFixed(2);
 };
 
-const MAX_MINUTES = 44640; // 31 days * 24 hours * 60 minutes
+const MAX_MINUTES = 44640;
 
 const formatMinutes = (minutes) => {
   if (minutes < 60) return `${minutes} mins`;
@@ -42,7 +39,6 @@ const formatMinutes = (minutes) => {
   return `${hours}h ${mins}m`;
 };
 
-export const SignUpStepOne = ({ formData, handleInputChange }) => (
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
     <InfoCard
@@ -69,7 +65,6 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
       </div>
     ))}
   </div>
-);
 );
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => (
@@ -141,7 +136,6 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
 );
 
 export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
-export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
   <div className="space-y-4">
     <InfoCard
       icon={Users}
@@ -174,9 +168,7 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
     )}
   </div>
 );
-);
 
-export const SignUpStepFour = ({ formData, setFormData }) => (
 export const SignUpStepFour = ({ formData, setFormData }) => (
   <div className="space-y-4">
     <InfoCard
@@ -194,14 +186,14 @@ export const SignUpStepFour = ({ formData, setFormData }) => (
         <ul className="list-disc list-inside pl-4">
           {formData.numbers.map((number, index) => (
             <li key={index}>
-              {number.prefix} - {number.minutes} minutes (£{calculatePrice(number.minutes)} additional)
+              {number.prefix} - {number.minutes} minutes (£{calculatePrice(number.minutes, number.bulkDiscount)} additional)
             </li>
           ))}
         </ul>
         <p><strong>Redirect Numbers:</strong></p>
         <ul className="list-disc list-inside pl-4">
           {formData.redirectNumbers.map((number, index) => (
-            <li key={index}>{number}</li>
+            <li key={index}>{number.name}: {number.number}</li>
           ))}
         </ul>
       </div>
@@ -221,5 +213,4 @@ export const SignUpStepFour = ({ formData, setFormData }) => (
       </div>
     </div>
   </div>
-);
 );
