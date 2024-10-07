@@ -6,6 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { SignUpStepOne, SignUpStepTwo, SignUpStepThree, SignUpStepFour } from '@/components/SignUpSteps';
 import { Progress } from "@/components/ui/progress";
+import { calculateTotalPrice } from '@/utils/pricingUtils';
+import { loadStripe } from '@stripe/stripe-js';
+
+const stripePromise = loadStripe('your_stripe_publishable_key');
 
 const popularPrefixes = [
   { value: "0800", label: "0800 (Toll-Free UK)" },
@@ -74,12 +78,31 @@ const SignUpPage = () => {
     setFormData((prev) => ({ ...prev, redirectNumbers: updatedRedirectNumbers }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (step < 4) {
       setStep(step + 1);
     } else {
-      setShowPricingTable(true);
+      const totalPrice = calculateTotalPrice(selectedPlan, formData.numbers);
+      const stripe = await stripePromise;
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: selectedPlan.stripePriceId,
+          quantity: 1,
+          totalPrice: totalPrice,
+        }),
+      });
+      const session = await response.json();
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+      if (result.error) {
+        console.error(result.error);
+      }
     }
   };
 
