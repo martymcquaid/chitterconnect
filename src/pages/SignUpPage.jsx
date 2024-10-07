@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
 import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { SignUpStepOne, SignUpStepTwo, SignUpStepThree, SignUpStepFour } from '@/components/SignUpSteps';
+import { Progress } from "@/components/ui/progress";
 
 const popularPrefixes = [
   { value: "0800", label: "0800 (Toll-Free UK)" },
@@ -26,7 +26,7 @@ const SignUpPage = () => {
     name: "",
     email: "",
     company: "",
-    numbers: [{ prefix: "" }],
+    numbers: [{ prefix: "", minutes: 500 }],
     redirectNumbers: [""],
     termsAccepted: false,
   });
@@ -36,16 +36,16 @@ const SignUpPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleNumberChange = (index, value) => {
+  const handleNumberChange = (index, field, value) => {
     const updatedNumbers = [...formData.numbers];
-    updatedNumbers[index] = { prefix: value };
+    updatedNumbers[index] = { ...updatedNumbers[index], [field]: value };
     setFormData((prev) => ({ ...prev, numbers: updatedNumbers }));
   };
 
   const addNumber = () => {
     setFormData((prev) => ({
       ...prev,
-      numbers: [...prev.numbers, { prefix: "" }],
+      numbers: [...prev.numbers, { prefix: "", minutes: 500 }],
     }));
   };
 
@@ -125,7 +125,7 @@ const SignUpPage = () => {
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center text-primary mb-6">Complete Your Subscription</h2>
           <stripe-pricing-table 
-            pricing-table-id="prctbl_1Q7MUMKco8kEMt5yatZxsr8g"
+            pricing-table-id="prctbl_1Q7OKlKco8kEMt5yHYg9tYF7"
             publishable-key="pk_test_51Q7MGUKco8kEMt5y4nfaguU23mTJIHSETmUCST7Vbsz57T8baLtPuy6BO1UBpfT1dosgevroLFZy6aheCFOoFqzS00wJGJge0z"
           >
           </stripe-pricing-table>
@@ -134,15 +134,15 @@ const SignUpPage = () => {
     );
   }
 
-
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">Sign Up for {selectedPlan?.name} Plan</CardTitle>
+            <CardTitle className="text-3xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name} Plan</CardTitle>
           </CardHeader>
           <CardContent>
+            <Progress value={(step / 4) * 100} className="mb-6" />
             <form onSubmit={handleSubmit}>
               <AnimatePresence mode="wait">
                 {renderStep()}
