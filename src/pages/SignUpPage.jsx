@@ -21,6 +21,7 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   const { selectedPlan } = location.state || {};
   const [step, setStep] = useState(1);
+  const [showPricingTable, setShowPricingTable] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -78,9 +79,7 @@ const SignUpPage = () => {
     if (step < 4) {
       setStep(step + 1);
     } else {
-      // Redirect to Stripe payment page
-      // This is a placeholder URL. Replace with your actual Stripe checkout URL
-      window.location.href = 'https://checkout.stripe.com/pay/cs_test_...';
+      setShowPricingTable(true);
     }
   };
 
@@ -119,6 +118,21 @@ const SignUpPage = () => {
       </motion.div>
     );
   };
+
+  if (showPricingTable) {
+    return (
+      <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center text-primary mb-6">Complete Your Subscription</h2>
+          <stripe-pricing-table 
+            pricing-table-id="prctbl_1Q7MUMKco8kEMt5yatZxsr8g"
+            publishable-key="pk_test_51Q7MGUKco8kEMt5y4nfaguU23mTJIHSETmUCST7Vbsz57T8baLtPuy6BO1UBpfT1dosgevroLFZy6aheCFOoFqzS00wJGJge0z"
+          >
+          </stripe-pricing-table>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
