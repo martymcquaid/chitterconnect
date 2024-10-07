@@ -145,5 +145,3 @@ export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => (
     </div>
   </div>
 );
-
-export default SignUpSteps;
