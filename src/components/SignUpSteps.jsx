@@ -6,7 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { SliderWithValue } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
+import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users, DollarSign } from "lucide-react";
+import { calculateTotalPrice, formatPrice } from '@/utils/pricingUtils';
 
 const InfoCard = ({ icon: Icon, title, description }) => (
   <Card className="mb-4 bg-secondary/10">
@@ -20,48 +21,24 @@ const InfoCard = ({ icon: Icon, title, description }) => (
   </Card>
 );
 
-const calculatePrice = (additionalMinutes) => {
-  const regularPrice = additionalMinutes * 0.05;
-  const discountedBlocks = Math.floor(additionalMinutes / 500);
-  const discountedMinutes = discountedBlocks * 500;
-  const remainingMinutes = additionalMinutes % 500;
-  const discountedPrice = discountedMinutes * 0.045 + remainingMinutes * 0.05;
-  const savings = regularPrice - discountedPrice;
-  return { regularPrice, discountedPrice, savings };
-};
-
-const MAX_ADDITIONAL_MINUTES = 10000;
-const formatMinutes = (minutes) => `${minutes} mins`;
-
-export const SignUpStepOne = ({ formData, handleInputChange }) => (
-  <div className="space-y-4">
-    <InfoCard
-      icon={Globe}
-      title="Global Communication Solution"
-      description="Set up your account to start connecting with customers worldwide."
-    />
-    {['name', 'email', 'company'].map((field) => (
-      <div key={field} className="space-y-2">
-        <div className="flex items-center space-x-2">
-          {field === 'name' && <User className="text-primary" />}
-          {field === 'email' && <Mail className="text-primary" />}
-          {field === 'company' && <Building2 className="text-primary" />}
-          <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-        </div>
-        <Input
-          id={field}
-          name={field}
-          value={formData[field]}
-          onChange={handleInputChange}
-          required
-          placeholder={`Enter your ${field}`}
-        />
+const PricingSummary = ({ plan, totalMinutes }) => (
+  <Card className="mb-4 bg-primary/10 p-4">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center">
+        <DollarSign className="text-primary mr-2" />
+        <h4 className="font-semibold">Monthly Price</h4>
       </div>
-    ))}
-  </div>
+      <span className="text-xl font-bold text-primary">
+        {formatPrice(calculateTotalPrice(plan, totalMinutes - plan.includedMinutes))}
+      </span>
+    </div>
+    <p className="text-sm text-muted-foreground mt-2">
+      Base plan: {plan.price}/month + Additional minutes: {formatPrice(calculateTotalPrice(plan, totalMinutes - plan.includedMinutes) - parseFloat(plan.price.replace('$', '')))}
+    </p>
+  </Card>
 );
 
-const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => {
+const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, plan }) => {
   const { regularPrice, discountedPrice, savings } = calculatePrice(number.additionalMinutes);
 
   return (
@@ -105,36 +82,75 @@ const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularP
   );
 };
 
-export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeNumber, popularPrefixes }) => (
+export const SignUpStepOne = ({ formData, handleInputChange, selectedPlan }) => (
   <div className="space-y-4">
     <InfoCard
-      icon={Phone}
-      title="Choose Your Numbers"
-      description="Select your preferred prefixes and add extra minutes as needed."
+      icon={Globe}
+      title="Global Communication Solution"
+      description="Set up your account to start connecting with customers worldwide."
     />
-    {formData.numbers.map((number, index) => (
-      <NumberSetup
-        key={index}
-        number={number}
-        index={index}
-        handleNumberChange={handleNumberChange}
-        removeNumber={removeNumber}
-        popularPrefixes={popularPrefixes}
-      />
+    <PricingSummary plan={selectedPlan} totalMinutes={selectedPlan.includedMinutes} />
+    {['name', 'email', 'company'].map((field) => (
+      <div key={field} className="space-y-2">
+        <div className="flex items-center space-x-2">
+          {field === 'name' && <User className="text-primary" />}
+          {field === 'email' && <Mail className="text-primary" />}
+          {field === 'company' && <Building2 className="text-primary" />}
+          <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
+        </div>
+        <Input
+          id={field}
+          name={field}
+          value={formData[field]}
+          onChange={handleInputChange}
+          required
+          placeholder={`Enter your ${field}`}
+        />
+      </div>
     ))}
-    <Button type="button" onClick={addNumber} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-      <Plus className="mr-2 h-4 w-4" /> Add Another Number
-    </Button>
   </div>
 );
 
-export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
-  <div className="space-y-4">
-    <InfoCard
-      icon={Users}
-      title="Team Setup"
-      description="Add team members' numbers for call routing. You can modify these later in your admin panel."
-    />
+export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeNumber, popularPrefixes, selectedPlan }) => {
+  const totalMinutes = formData.numbers.reduce((sum, number) => sum + number.additionalMinutes, selectedPlan.includedMinutes);
+  
+  return (
+    <div className="space-y-4">
+      <InfoCard
+        icon={Phone}
+        title="Choose Your Numbers"
+        description="Select your preferred prefixes and add extra minutes as needed."
+      />
+      <PricingSummary plan={selectedPlan} totalMinutes={totalMinutes} />
+      {formData.numbers.map((number, index) => (
+        <NumberSetup
+          key={index}
+          number={number}
+          index={index}
+          handleNumberChange={handleNumberChange}
+          removeNumber={removeNumber}
+          popularPrefixes={popularPrefixes}
+          plan={selectedPlan}
+        />
+      ))}
+      <Button type="button" onClick={addNumber} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+        <Plus className="mr-2 h-4 w-4" /> Add Another Number
+      </Button>
+    </div>
+  );
+};
+
+export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => {
+  const totalMinutes = formData.numbers.reduce((sum, number) => sum + number.additionalMinutes, selectedPlan.includedMinutes);
+  
+  return (
+    <div className="space-y-4">
+      <InfoCard
+        icon={Users}
+        title="Team Setup"
+        description="Add team members' numbers for call routing. You can modify these later in your admin panel."
+      />
+      <PricingSummary plan={selectedPlan} totalMinutes={totalMinutes} />
     {formData.redirectNumbers.map((number, index) => (
       <div key={index} className="flex space-x-2">
         <Input
@@ -159,16 +175,21 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
         <Plus className="mr-2 h-4 w-4" /> Add Team Member
       </Button>
     )}
-  </div>
-);
+    </div>
+  );
+};
 
-export const SignUpStepFour = ({ formData, setFormData }) => (
-  <div className="space-y-4">
-    <InfoCard
-      icon={Clock}
-      title="Almost There!"
-      description="Review your information and accept our terms to complete your sign-up."
-    />
+export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => {
+  const totalMinutes = formData.numbers.reduce((sum, number) => sum + number.additionalMinutes, selectedPlan.includedMinutes);
+  
+  return (
+    <div className="space-y-4">
+      <InfoCard
+        icon={Clock}
+        title="Almost There!"
+        description="Review your information and accept our terms to complete your sign-up."
+      />
+      <PricingSummary plan={selectedPlan} totalMinutes={totalMinutes} />
     <Card className="p-4">
       <h3 className="text-lg font-semibold mb-4">Review Your Information</h3>
       <div className="space-y-2">
@@ -205,5 +226,6 @@ export const SignUpStepFour = ({ formData, setFormData }) => (
         </label>
       </div>
     </div>
-  </div>
-);
+    </div>
+  );
+};

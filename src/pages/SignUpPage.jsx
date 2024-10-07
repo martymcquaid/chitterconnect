@@ -85,13 +85,14 @@ const SignUpPage = () => {
 
   const renderStep = () => {
     const steps = [
-      <SignUpStepOne formData={formData} handleInputChange={handleInputChange} />,
+      <SignUpStepOne formData={formData} handleInputChange={handleInputChange} selectedPlan={selectedPlan} />,
       <SignUpStepTwo 
         formData={formData} 
         handleNumberChange={handleNumberChange}
         addNumber={addNumber}
         removeNumber={removeNumber}
         popularPrefixes={popularPrefixes}
+        selectedPlan={selectedPlan}
       />,
       <SignUpStepThree 
         formData={formData} 
@@ -103,6 +104,7 @@ const SignUpPage = () => {
       <SignUpStepFour 
         formData={formData} 
         setFormData={setFormData}
+        selectedPlan={selectedPlan}
       />
     ];
 
