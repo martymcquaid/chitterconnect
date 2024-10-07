@@ -29,8 +29,9 @@ const HeroSection = () => {
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
             Elevate Your Business Communication
           </h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-muted-foreground">
-            Professional phone numbers, smart routing, and seamless team management in one powerful platform.
+          <p className="text-xl mb-8 max-w-3xl mx-auto text-muted-foreground">
+            Choose professional numbers like 0800 434 9349 or +44 7... to enhance your business image. 
+            Our smart routing keeps your team's personal numbers private while maintaining seamless communication.
           </p>
           <div className="flex justify-center space-x-4">
             <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
@@ -42,17 +43,17 @@ const HeroSection = () => {
           <FeatureCard
             icon={PhoneCall}
             title="Professional Numbers"
-            description="Choose from toll-free, local, or international numbers to enhance your business presence."
+            description="Choose from a variety of number formats including toll-free (0800), local, or international (+44) to suit your business needs."
           />
           <FeatureCard
             icon={Shield}
-            title="Privacy Protection"
-            description="Keep your team's personal numbers private while maintaining professional communication."
+            title="Enhanced Privacy"
+            description="Protect your team's personal numbers while maintaining professional communication channels."
           />
           <FeatureCard
             icon={Users}
             title="Smart Team Routing"
-            description="Efficiently route calls to the right team member, ensuring 24/7 availability."
+            description="Efficiently direct calls to the right team member without exposing individual phone numbers."
           />
         </div>
       </div>
