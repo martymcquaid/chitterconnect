@@ -1,5 +1,5 @@
 export const calculateTotalPrice = (plan, additionalMinutes) => {
-  const basePrice = parseFloat(plan.price.replace('$', ''));
+  const basePrice = parseFloat(plan.price.replace('£', ''));
   const additionalCost = calculateAdditionalCost(plan, additionalMinutes);
   return basePrice + additionalCost;
 };
@@ -15,4 +15,4 @@ export const calculateAdditionalCost = (plan, additionalMinutes) => {
   return discountedPrice;
 };
 
-export const formatPrice = (price) => `$${price.toFixed(2)}`;
+export const formatPrice = (price) => `£${price.toFixed(2)}`;
