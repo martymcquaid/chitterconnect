@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
@@ -12,7 +12,6 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   const { selectedPlan } = location.state || {};
   const [step, setStep] = useState(1);
-  const [showPricingTable, setShowPricingTable] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,7 +31,9 @@ const SignUpPage = () => {
     if (step < 4) {
       setStep(step + 1);
     } else {
-      setShowPricingTable(true);
+      console.log("Form submitted:", formData);
+      // Here you would typically send the data to your backend
+      navigate('/dashboard'); // Redirect to dashboard or confirmation page
     }
   };
 
@@ -46,20 +47,18 @@ const SignUpPage = () => {
         >
           <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle className="text-3xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name} Plan</CardTitle>
+              <CardTitle className="text-3xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name || 'Our'} Plan</CardTitle>
             </CardHeader>
             <CardContent>
               <Progress value={(step / 4) * 100} className="mb-6" />
               <form onSubmit={handleSubmit}>
-                <AnimatePresence mode="wait">
-                  <SignUpSteps
-                    step={step}
-                    formData={formData}
-                    setFormData={setFormData}
-                    handleInputChange={handleInputChange}
-                    selectedPlan={selectedPlan}
-                  />
-                </AnimatePresence>
+                <SignUpSteps
+                  step={step}
+                  formData={formData}
+                  setFormData={setFormData}
+                  handleInputChange={handleInputChange}
+                  selectedPlan={selectedPlan || { includedMinutes: 500, maxUsers: 5 }}
+                />
                 <motion.div 
                   className="mt-6 flex justify-between"
                   initial={{ opacity: 0 }}

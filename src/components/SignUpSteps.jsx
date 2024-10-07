@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
 import { motion } from "framer-motion";
 
+// Helper components and functions
 const InfoCard = ({ icon: Icon, title, description }) => (
   <Card className="mb-4 bg-secondary/10">
     <CardContent className="flex items-start p-4">
@@ -33,6 +34,35 @@ const calculatePrice = (additionalMinutes, baseRate = 0.05, discountRate = 0.045
 
 const MAX_ADDITIONAL_MINUTES = 1100;
 const formatMinutes = (minutes) => `${minutes} mins`;
+
+// Step components
+const SignUpStepOne = ({ formData, handleInputChange }) => (
+  <div className="space-y-4">
+    <InfoCard
+      icon={Globe}
+      title="Global Communication Solution"
+      description="Set up your account to start connecting with customers worldwide."
+    />
+    {['name', 'email', 'company'].map((field) => (
+      <div key={field} className="space-y-2">
+        <div className="flex items-center space-x-2">
+          {field === 'name' && <User className="text-primary" />}
+          {field === 'email' && <Mail className="text-primary" />}
+          {field === 'company' && <Building2 className="text-primary" />}
+          <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
+        </div>
+        <Input
+          id={field}
+          name={field}
+          value={formData[field]}
+          onChange={handleInputChange}
+          required
+          placeholder={`Enter your ${field}`}
+        />
+      </div>
+    ))}
+  </div>
+);
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes, includedMinutes }) => {
   const totalMinutes = number.minutes || includedMinutes;
@@ -96,34 +126,6 @@ const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularP
     </motion.div>
   );
 };
-
-const SignUpStepOne = ({ formData, handleInputChange }) => (
-  <div className="space-y-4">
-    <InfoCard
-      icon={Globe}
-      title="Global Communication Solution"
-      description="Set up your account to start connecting with customers worldwide."
-    />
-    {['name', 'email', 'company'].map((field) => (
-      <div key={field} className="space-y-2">
-        <div className="flex items-center space-x-2">
-          {field === 'name' && <User className="text-primary" />}
-          {field === 'email' && <Mail className="text-primary" />}
-          {field === 'company' && <Building2 className="text-primary" />}
-          <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-        </div>
-        <Input
-          id={field}
-          name={field}
-          value={formData[field]}
-          onChange={handleInputChange}
-          required
-          placeholder={`Enter your ${field}`}
-        />
-      </div>
-    ))}
-  </div>
-);
 
 const SignUpStepTwo = ({ formData, setFormData, selectedPlan }) => {
   const handleNumberChange = (index, field, value) => {
