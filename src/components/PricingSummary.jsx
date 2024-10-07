@@ -1,12 +1,12 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
-import { calculateTotalPrice, formatPrice, calculateAdditionalCost } from '@/utils/pricingUtils';
+import { calculateTotalPrice, formatPrice, parsePrice } from '@/utils/pricingUtils';
 
-const PricingSummary = ({ plan, numbers, basePrice }) => {
-  const totalAdditionalMinutes = numbers.reduce((sum, number) => sum + (number.additionalMinutes || 0), 0);
-  const additionalCost = calculateAdditionalCost(plan, totalAdditionalMinutes);
-  const totalPrice = basePrice + additionalCost;
+const PricingSummary = ({ plan, numbers }) => {
+  const basePrice = parsePrice(plan.price);
+  const totalPrice = calculateTotalPrice(plan, numbers);
+  const additionalCost = totalPrice - basePrice;
 
   return (
     <Card className="mb-4 bg-primary/10 p-4">
@@ -23,8 +23,8 @@ const PricingSummary = ({ plan, numbers, basePrice }) => {
         <p>Base plan: {formatPrice(basePrice)}/month</p>
         {additionalCost > 0 && (
           <>
-            <p>Additional minutes cost: {formatPrice(additionalCost)}</p>
-            <p>Total additional minutes: {totalAdditionalMinutes}</p>
+            <p>Additional costs: {formatPrice(additionalCost)}</p>
+            <p>Total additional minutes: {numbers.reduce((sum, number) => sum + (number.additionalMinutes || 0), 0)}</p>
           </>
         )}
         {numbers.length > 1 && (

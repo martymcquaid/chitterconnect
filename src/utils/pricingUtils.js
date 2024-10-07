@@ -1,6 +1,12 @@
-export const calculateTotalPrice = (plan, additionalMinutes) => {
-  const basePrice = parseFloat(plan.price.replace('£', ''));
-  const additionalCost = calculateAdditionalCost(plan, additionalMinutes);
+export const parsePrice = (price) => {
+  if (typeof price === 'number') return price;
+  return parseFloat(price.replace(/[^0-9.]/g, '')) || 0;
+};
+
+export const calculateTotalPrice = (plan, numbers) => {
+  const basePrice = parsePrice(plan.price);
+  const totalAdditionalMinutes = numbers.reduce((sum, number) => sum + (number.additionalMinutes || 0), 0);
+  const additionalCost = calculateAdditionalCost(plan, totalAdditionalMinutes);
   return basePrice + additionalCost;
 };
 
