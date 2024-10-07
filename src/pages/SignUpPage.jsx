@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,8 @@ import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { SignUpStepOne, SignUpStepTwo, SignUpStepThree, SignUpStepFour } from '@/components/SignUpSteps';
 import { Progress } from "@/components/ui/progress";
 import { calculateTotalPrice } from '@/utils/pricingUtils';
+import { convertCurrency, formatCurrency } from '@/utils/currencyUtils';
+import { CurrencyContext } from '@/contexts/CurrencyContext';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe('your_stripe_publishable_key');
@@ -26,6 +28,7 @@ const SignUpPage = () => {
   const { selectedPlan } = location.state || {};
   const [step, setStep] = useState(1);
   const [showPricingTable, setShowPricingTable] = useState(false);
+  const { currency } = useContext(CurrencyContext);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -85,6 +88,7 @@ const SignUpPage = () => {
     } else {
       try {
         const totalPrice = calculateTotalPrice(selectedPlan, formData.numbers);
+        const convertedTotalPrice = convertCurrency(totalPrice, 'GBP', currency);
         const stripe = await stripePromise;
         const response = await fetch('/api/create-checkout-session', {
           method: 'POST',
@@ -94,7 +98,8 @@ const SignUpPage = () => {
           body: JSON.stringify({
             priceId: selectedPlan.stripePriceId,
             quantity: 1,
-            totalPrice: totalPrice,
+            totalPrice: convertedTotalPrice,
+            currency: currency,
           }),
         });
 
@@ -112,7 +117,6 @@ const SignUpPage = () => {
         }
       } catch (error) {
         console.error("Error during checkout:", error);
-        // Handle the error, maybe show a user-friendly message
       }
     }
   };
@@ -163,6 +167,7 @@ const SignUpPage = () => {
           <stripe-pricing-table 
             pricing-table-id="prctbl_1Q7OKlKco8kEMt5yHYg9tYF7"
             publishable-key="pk_test_51Q7MGUKco8kEMt5y4nfaguU23mTJIHSETmUCST7Vbsz57T8baLtPuy6BO1UBpfT1dosgevroLFZy6aheCFOoFqzS00wJGJge0z"
+            currency={currency.toLowerCase()}
           >
           </stripe-pricing-table>
         </div>
@@ -175,7 +180,12 @@ const SignUpPage = () => {
       <div className="max-w-3xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center text-primary">Sign Up for {selectedPlan?.name} Plan</CardTitle>
+            <CardTitle className="text-3xl font-bold text-center text-primary">
+              Sign Up for {selectedPlan?.name} Plan
+            </CardTitle>
+            <p className="text-center text-lg">
+              {formatCurrency(convertCurrency(parseFloat(selectedPlan?.price.replace('£', '')), 'GBP', currency), currency)}/month
+            </p>
           </CardHeader>
           <CardContent>
             <Progress value={(step / 4) * 100} className="mb-6" />

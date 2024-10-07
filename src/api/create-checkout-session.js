@@ -5,12 +5,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { priceId, quantity, totalPrice } = req.body;
+      const { priceId, quantity, totalPrice, currency } = req.body;
 
-      // Create a new price based on the calculated total
+      // Create a new price based on the calculated total and selected currency
       const newPrice = await stripe.prices.create({
         unit_amount: Math.round(totalPrice * 100), // Stripe expects amount in cents
-        currency: 'gbp',
+        currency: currency.toLowerCase(),
         recurring: { interval: 'month' },
         product: 'your_product_id_here', // Replace with your actual product ID
       });
@@ -26,6 +26,7 @@ export default async function handler(req, res) {
         mode: 'subscription',
         success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/canceled`,
+        currency: currency.toLowerCase(),
       });
 
       res.status(200).json(session);

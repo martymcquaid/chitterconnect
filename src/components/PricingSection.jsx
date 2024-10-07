@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
+import { CurrencyContext } from '@/contexts/CurrencyContext';
+import { convertCurrency, formatCurrency } from '@/utils/currencyUtils';
 
 const plans = [
   {
     name: "Starter",
-    price: "£19",
+    price: 19,
     maxUsers: 5,
     includedMinutes: 500,
     features: [
@@ -53,6 +55,7 @@ const plans = [
 
 const PricingSection = () => {
   const navigate = useNavigate();
+  const { currency } = useContext(CurrencyContext);
 
   const handlePlanSelection = (plan) => {
     navigate('/signup', { state: { selectedPlan: plan } });
@@ -72,7 +75,10 @@ const PricingSection = () => {
             <Card className={`flex flex-col h-full bg-card hover:bg-card/90 transition-colors duration-300 ${plan.name === "Starter" ? "border-primary border-2" : ""}`}>
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-primary">{plan.name}</CardTitle>
-                <p className="text-3xl font-bold">{plan.price}<span className="text-sm font-normal">/month</span></p>
+                <p className="text-3xl font-bold">
+                  {formatCurrency(convertCurrency(plan.price, 'GBP', currency), currency)}
+                  <span className="text-sm font-normal">/month</span>
+                </p>
               </CardHeader>
               <CardContent className="flex-grow">
                 <ul className="space-y-2 mb-6">
