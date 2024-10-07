@@ -34,7 +34,7 @@ export const SignUpStepOne = ({ formData, handleInputChange, selectedPlan }) => 
             name={field}
             value={formData[field]}
             onChange={handleInputChange}
-            required
+            required={field !== 'company'}
             placeholder={`Enter your ${field}`}
           />
         </div>
@@ -89,12 +89,14 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
             value={number.name}
             onChange={(e) => handleRedirectNumberChange(index, 'name', e.target.value)}
             className="flex-grow"
+            required
           />
           <Input
             placeholder="Enter redirect number"
             value={number.number}
             onChange={(e) => handleRedirectNumberChange(index, 'number', e.target.value)}
             className="flex-grow"
+            required
           />
           {index > 0 && (
             <Button type="button" variant="destructive" onClick={() => removeRedirectNumber(index)}>Remove</Button>

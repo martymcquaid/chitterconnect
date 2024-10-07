@@ -28,6 +28,14 @@ const SignUpPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (step < 4) {
+      if (step === 2 && formData.numbers.some(number => !number.prefix)) {
+        alert("Please select a prefix for all numbers.");
+        return;
+      }
+      if (step === 3 && formData.redirectNumbers.length === 0) {
+        alert("Please add at least one team member.");
+        return;
+      }
       setStep(step + 1);
     } else {
       await handleStripeCheckout(selectedPlan, formData, currency, stripePromise);
