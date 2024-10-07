@@ -25,8 +25,8 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
         >
-          Streamline your on-call communication with a single, powerful number. 
-          Connect your team effortlessly and never miss an important call again.
+          Streamline your global communication with multiple numbers across regions. 
+          Connect your team effortlessly and never miss an important call, no matter where you are.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

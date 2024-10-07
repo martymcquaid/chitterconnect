@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import SignUpModal from './SignUpModal';
+import { useNavigate } from 'react-router-dom';
 
 const plans = [
   {
     name: "Starter",
     price: "$49",
-    features: ["1 phone number", "Up to 5 team members", "Basic call routing", "24/7 support"],
+    features: ["Up to 1 phone number", "Up to 5 team members", "Basic call routing", "24/7 support"],
   },
   {
     name: "Professional",
     price: "$99",
-    features: ["3 phone numbers", "Up to 15 team members", "Advanced call routing", "Analytics dashboard", "Priority support"],
+    features: ["Up to 3 phone numbers", "Up to 15 team members", "Advanced call routing", "Analytics dashboard", "Priority support"],
   },
   {
     name: "Enterprise",
@@ -23,12 +23,10 @@ const plans = [
 ];
 
 const PricingSection = () => {
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handlePlanSelection = (plan) => {
-    setSelectedPlan(plan);
-    setIsModalOpen(true);
+    navigate('/signup', { state: { selectedPlan: plan } });
   };
 
   return (
@@ -67,7 +65,6 @@ const PricingSection = () => {
           </motion.div>
         ))}
       </div>
-      <SignUpModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectedPlan={selectedPlan} />
     </section>
   );
 };
