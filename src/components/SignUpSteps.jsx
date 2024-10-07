@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { User, Mail, Building2, Plus, Phone, Clock, Globe, Users } from "lucide-react";
-import { calculateTotalPrice, formatPrice } from '@/utils/pricingUtils';
+import { calculateTotalPrice, formatPrice, parsePrice } from '@/utils/pricingUtils';
 import PricingSummary from './PricingSummary';
 import InfoCard from './InfoCard';
 import NumberSetup from './NumberSetup';
@@ -17,7 +17,7 @@ export const SignUpStepOne = ({ formData, handleInputChange, selectedPlan }) => 
       title="Global Communication Solution"
       description="Set up your account to start connecting with customers worldwide."
     />
-    <PricingSummary plan={selectedPlan} numbers={[]} basePrice={parseFloat(selectedPlan.price.replace('$', ''))} />
+    <PricingSummary plan={selectedPlan} numbers={[]} />
     {['name', 'email', 'company'].map((field) => (
       <div key={field} className="space-y-2">
         <div className="flex items-center space-x-2">
@@ -46,7 +46,7 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
       title="Choose Your Numbers"
       description="Select your preferred prefixes and add extra minutes as needed."
     />
-    <PricingSummary plan={selectedPlan} numbers={formData.numbers} basePrice={parseFloat(selectedPlan.price.replace('£', ''))} />
+    <PricingSummary plan={selectedPlan} numbers={formData.numbers} />
     {formData.numbers.map((number, index) => (
       <NumberSetup
         key={index}
@@ -71,7 +71,7 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
       title="Team Setup"
       description="Add team members' numbers for call routing. You can modify these later in your admin panel."
     />
-    <PricingSummary plan={selectedPlan} numbers={formData.numbers} basePrice={parseFloat(selectedPlan.price.replace('$', ''))} />
+    <PricingSummary plan={selectedPlan} numbers={formData.numbers} />
     {formData.redirectNumbers.map((number, index) => (
       <div key={index} className="flex space-x-2">
         <Input
@@ -106,7 +106,7 @@ export const SignUpStepFour = ({ formData, setFormData, selectedPlan }) => (
       title="Almost There!"
       description="Review your information and accept our terms to complete your sign-up."
     />
-    <PricingSummary plan={selectedPlan} numbers={formData.numbers} basePrice={parseFloat(selectedPlan.price.replace('$', ''))} />
+    <PricingSummary plan={selectedPlan} numbers={formData.numbers} />
     <Card className="p-4">
       <h3 className="text-lg font-semibold mb-4">Review Your Information</h3>
       <div className="space-y-2">
