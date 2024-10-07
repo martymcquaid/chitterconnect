@@ -20,25 +20,17 @@ const InfoCard = ({ icon: Icon, title, description }) => (
   </Card>
 );
 
-const calculatePrice = (minutes, bulkDiscount) => {
-  const baseMinutes = 500;
-  const additionalMinutes = Math.max(0, minutes - baseMinutes);
-  const bulkMinutes = Math.floor(additionalMinutes / 500) * 500;
-  const bulkPrice = bulkMinutes * (bulkDiscount ? 0.045 : 0.05);
-  const remainingMinutes = additionalMinutes % 500;
-  const remainingPrice = remainingMinutes * 0.05;
-  return (bulkPrice + remainingPrice).toFixed(2);
+const calculatePrice = (baseMinutes, additionalMinutes) => {
+  const addOnPacks = Math.floor(additionalMinutes / 500);
+  const addOnPrice = addOnPacks * 22.50;
+  return addOnPrice.toFixed(2);
 };
 
-const MAX_MINUTES = 44640;
+const MAX_ADDITIONAL_MINUTES = 1600;
 
-const formatMinutes = (minutes) => {
-  if (minutes < 60) return `${minutes} mins`;
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return `${hours}h ${mins}m`;
-};
+const formatMinutes = (minutes) => `${minutes} mins`;
 
+export const SignUpStepOne = ({ formData, handleInputChange }) => (
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
     <InfoCard
@@ -66,6 +58,7 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
     ))}
   </div>
 );
+);
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => (
   <Card key={index} className="p-4 mb-4 bg-gradient-to-br from-secondary/20 to-background">
@@ -85,28 +78,21 @@ const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularP
       )}
     </div>
     <div className="space-y-4">
-      <Label className="text-lg font-semibold">Minutes: {formatMinutes(number.minutes)}</Label>
+      <Label className="text-lg font-semibold">Additional Minutes: {formatMinutes(number.additionalMinutes)}</Label>
       <SliderWithValue
-        min={500}
-        max={MAX_MINUTES}
-        step={50}
-        value={[number.minutes]}
-        onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
+        min={0}
+        max={MAX_ADDITIONAL_MINUTES}
+        step={500}
+        value={[number.additionalMinutes]}
+        onValueChange={(value) => handleNumberChange(index, 'additionalMinutes', value[0])}
         className="py-4"
         formatValue={formatMinutes}
       />
-      <div className="flex items-center space-x-2 mt-2">
-        <Checkbox
-          id={`bulkDiscount-${index}`}
-          checked={number.bulkDiscount}
-          onCheckedChange={(checked) => handleNumberChange(index, 'bulkDiscount', checked)}
-        />
-        <label htmlFor={`bulkDiscount-${index}`} className="text-sm">
-          Apply bulk discount (4.5p per minute for additional 500-minute blocks)
-        </label>
-      </div>
       <p className="text-sm font-medium text-primary">
-        Additional cost: £{calculatePrice(number.minutes, number.bulkDiscount)} for {number.minutes - 500} extra minutes
+        Add-on cost: £{calculatePrice(500, number.additionalMinutes)} for {number.additionalMinutes} extra minutes
+      </p>
+      <p className="text-sm text-muted-foreground">
+        500 minutes included. Add-on packs of 500 minutes for £22.50 each (4.5p per minute).
       </p>
     </div>
   </Card>
@@ -117,7 +103,7 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
     <InfoCard
       icon={Phone}
       title="Choose Your Numbers"
-      description="Select your preferred prefixes and set up minutes for each number."
+      description="Select your preferred prefixes and add extra minutes as needed."
     />
     {formData.numbers.map((number, index) => (
       <NumberSetup
@@ -135,6 +121,7 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
   </div>
 );
 
+export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
 export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
   <div className="space-y-4">
     <InfoCard
@@ -168,6 +155,7 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
     )}
   </div>
 );
+);
 
 export const SignUpStepFour = ({ formData, setFormData }) => (
   <div className="space-y-4">
@@ -186,7 +174,7 @@ export const SignUpStepFour = ({ formData, setFormData }) => (
         <ul className="list-disc list-inside pl-4">
           {formData.numbers.map((number, index) => (
             <li key={index}>
-              {number.prefix} - {number.minutes} minutes (£{calculatePrice(number.minutes, number.bulkDiscount)} additional)
+              {number.prefix} - 500 included minutes + {number.additionalMinutes} extra minutes (£{calculatePrice(500, number.additionalMinutes)} additional)
             </li>
           ))}
         </ul>
