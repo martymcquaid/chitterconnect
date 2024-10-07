@@ -10,7 +10,14 @@ const plans = [
     name: "Starter",
     price: "$49",
     maxUsers: 5,
-    features: ["1 phone number", "Up to 5 team members", "Basic call routing", "24/7 support"],
+    features: [
+      "1 phone number",
+      "Up to 5 team members",
+      "Basic call routing",
+      "24/7 support",
+      "500 included minutes",
+      "Additional minutes at 7p per minute"
+    ],
   },
   {
     name: "Professional",
@@ -44,7 +51,7 @@ const PricingSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
           >
-            <Card className="flex flex-col h-full bg-card hover:bg-card/90 transition-colors duration-300">
+            <Card className={`flex flex-col h-full bg-card hover:bg-card/90 transition-colors duration-300 ${plan.name === "Starter" ? "border-primary border-2" : ""}`}>
               <CardHeader>
                 <CardTitle className="text-2xl font-bold text-primary">{plan.name}</CardTitle>
                 <p className="text-3xl font-bold">{plan.price}<span className="text-sm font-normal">/month</span></p>

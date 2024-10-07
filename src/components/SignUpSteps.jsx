@@ -23,7 +23,7 @@ const InfoCard = ({ icon: Icon, title, description }) => (
 const calculatePrice = (minutes) => {
   const baseMinutes = 500;
   const additionalMinutes = Math.max(0, minutes - baseMinutes);
-  const additionalCost = Math.ceil(additionalMinutes / 100) * 3.50;
+  const additionalCost = additionalMinutes * 0.07; // 7p per minute
   return additionalCost.toFixed(2);
 };
 
@@ -84,12 +84,15 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
           <Slider
             min={500}
             max={5000}
-            step={100}
+            step={50}
             value={[number.minutes]}
             onValueChange={(value) => handleNumberChange(index, 'minutes', value[0])}
           />
           <p className="text-sm text-muted-foreground">
             Additional cost: £{calculatePrice(number.minutes)} for {number.minutes} minutes
+          </p>
+          <p className="text-xs text-muted-foreground">
+            (Includes 500 free minutes, additional minutes at 7p per minute)
           </p>
         </div>
       </Card>
