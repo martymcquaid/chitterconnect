@@ -27,10 +27,8 @@ const calculatePrice = (baseMinutes, additionalMinutes) => {
 };
 
 const MAX_ADDITIONAL_MINUTES = 1600;
-
 const formatMinutes = (minutes) => `${minutes} mins`;
 
-export const SignUpStepOne = ({ formData, handleInputChange }) => (
 export const SignUpStepOne = ({ formData, handleInputChange }) => (
   <div className="space-y-4">
     <InfoCard
@@ -57,7 +55,6 @@ export const SignUpStepOne = ({ formData, handleInputChange }) => (
       </div>
     ))}
   </div>
-);
 );
 
 const NumberSetup = ({ number, index, handleNumberChange, removeNumber, popularPrefixes }) => (
@@ -122,7 +119,6 @@ export const SignUpStepTwo = ({ formData, handleNumberChange, addNumber, removeN
 );
 
 export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
-export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedirectNumber, removeRedirectNumber, selectedPlan }) => (
   <div className="space-y-4">
     <InfoCard
       icon={Users}
@@ -154,7 +150,6 @@ export const SignUpStepThree = ({ formData, handleRedirectNumberChange, addRedir
       </Button>
     )}
   </div>
-);
 );
 
 export const SignUpStepFour = ({ formData, setFormData }) => (
