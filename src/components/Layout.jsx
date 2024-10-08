@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, staggerChildren: 0.1 }}
             >
-              {['Home', 'Pricing', 'Sign Up'].map((item, index) => (
+              {['Home', 'Pricing', 'PSTN Switch-off', 'Sign Up'].map((item, index) => (
                 <motion.li
                   key={item}
                   initial={{ opacity: 0, y: -20 }}
@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <Link 
-                    to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`}
+                    to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
                     className="text-foreground hover:text-primary transition-colors duration-200"
                   >
                     {item}
