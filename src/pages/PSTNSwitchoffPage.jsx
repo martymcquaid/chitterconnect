@@ -6,8 +6,9 @@ import { ArrowRight } from 'lucide-react';
 import PSTNHeader from '@/components/PSTNSwitchoff/PSTNHeader';
 import PSTNTimeline from '@/components/PSTNSwitchoff/PSTNTimeline';
 import PSTNFeatures from '@/components/PSTNSwitchoff/PSTNFeatures';
-import PSTNBusinessTypes from '@/components/PSTNSwitchoff/PSTNBusinessTypes';
-import PSTNHowItWorks from '@/components/PSTNSwitchoff/PSTNHowItWorks';
+import PSTNSmallBusiness from '@/components/PSTNSwitchoff/PSTNSmallBusiness';
+import PSTNComparison from '@/components/PSTNSwitchoff/PSTNComparison';
+import PSTNTestimonials from '@/components/PSTNSwitchoff/PSTNTestimonials';
 
 const PSTNSwitchoffPage = () => {
   return (
@@ -15,18 +16,19 @@ const PSTNSwitchoffPage = () => {
       <div className="max-w-6xl mx-auto">
         <PSTNHeader />
         <PSTNTimeline />
+        <PSTNSmallBusiness />
         <PSTNFeatures />
-        <PSTNBusinessTypes />
-        <PSTNHowItWorks />
+        <PSTNComparison />
+        <PSTNTestimonials />
         
         <motion.div 
           className="text-center mt-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 1.6 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <h2 className="text-3xl font-bold mb-4">Ready to Future-Proof Your Business Communication?</h2>
-          <p className="text-xl mb-6">Join thousands of satisfied businesses who've made the smart switch with ChitterChat.</p>
+          <p className="text-xl mb-6">Join thousands of satisfied small businesses who've made the smart switch with ChitterChat.</p>
           <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-4">
             <Link to="/signup" className="flex items-center">
               Get Started Now <ArrowRight className="ml-2" />
