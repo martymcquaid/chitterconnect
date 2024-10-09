@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PhoneOff, Wifi, PoundSterling, Clock, CheckCircle, Building, Store, Home, Briefcase, ArrowRight, PhoneForwarded, VoiceMailIcon, MessageSquare } from 'lucide-react';
+import { PhoneOff, Wifi, PoundSterling, Clock, CheckCircle, Building, Store, Home, Briefcase, ArrowRight, PhoneForwarded, Voicemail, MessageSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
@@ -26,7 +26,7 @@ const PSTNSwitchoff = () => {
     { icon: PhoneOff, title: "Keep Your Number", description: "Port your existing landline number to our service." },
     { icon: PhoneForwarded, title: "Smart Call Routing", description: "Automated answering service to direct calls to the right department." },
     { icon: Clock, title: "24/7 Availability", description: "Auto call forwarding outside business hours ensures you never miss a call." },
-    { icon: VoiceMailIcon, title: "Voicemail to Email", description: "Receive voicemails as email attachments for easy management." },
+    { icon: Voicemail, title: "Voicemail to Email", description: "Receive voicemails as email attachments for easy management." },
     { icon: MessageSquare, title: "SMS Integration", description: "Send and receive SMS messages through your business number." },
   ];
 
